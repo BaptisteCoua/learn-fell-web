@@ -15,7 +15,12 @@
   "dependencies": {
     "@nuxtjs/i18n": "^10.6.0",
     "@pinia/nuxt": "^1.0.2",
+    "@tiptap/extension-link": "^3.31.3",
+    "@tiptap/pm": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
+    "@tiptap/vue-3": "^3.31.3",
     "@vite-pwa/nuxt": "^1.1.1",
+    "date-fns": "^4.4.0",
     "laravel-raom-nuxt": "^0.3.7",
     "nuxt": "^4.5.2",
     "pinia": "^4.0.3",

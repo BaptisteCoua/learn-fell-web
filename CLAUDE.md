@@ -1,6 +1,6 @@
-# Learn Fell — Web
+# CINQ — Web
 
-Nuxt 4 front of Learn Fell, shipped as a PWA — there is no native mobile app. It consumes
+Nuxt 4 front of CINQ, shipped as a PWA — there is no native mobile app. It consumes
 the `back` repo (Laravel API). Part of the `learn-fell-workspace` spec-kit workspace: open
 sessions at the workspace root.
 
