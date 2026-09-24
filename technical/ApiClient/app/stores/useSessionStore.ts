@@ -14,14 +14,7 @@ export const useSessionStore = defineStore('session', () => {
   const isLoaded = ref(false)
 
   const isSignedIn = computed(() => user.value !== null)
-  const initials = computed(() =>
-    (user.value?.display_name ?? '')
-      .split(/\s+/)
-      .filter(Boolean)
-      .slice(0, 2)
-      .map((word) => word[0]?.toUpperCase())
-      .join(''),
-  )
+  const initials = computed(() => initialsOf(user.value?.display_name ?? ''))
 
   const can = (permission: string): boolean => user.value?.permissions.includes(permission) ?? false
 

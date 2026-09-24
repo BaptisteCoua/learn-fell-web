@@ -12,5 +12,11 @@
   "my account": "Mon compte",
   "create a subject": "Créer un sujet",
   "log in": "Se connecter",
-  "create an account": "Créer un compte"
+  "create an account": "Créer un compte",
+  "error {code}": "Erreur {code}",
+  "content not found": "Contenu introuvable",
+  "something went wrong": "Une erreur est survenue",
+  "this subject does not exist, or it is no longer available. its author may have unpublished it.": "Ce sujet n'existe pas, ou il n'est plus disponible. Il a peut-être été dépublié par son auteur.",
+  "explore the catalogue": "Explorer le catalogue",
+  "back to home": "Retour à l'accueil"
 }
