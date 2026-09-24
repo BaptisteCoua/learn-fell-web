@@ -5,4 +5,7 @@ export default defineNuxtConfig({
       apiBaseUrl: 'http://localhost:8090/api',
     },
   },
+  i18n: {
+    locales: [{ code: 'fr', file: 'fr.json' }],
+  },
 })

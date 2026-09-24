@@ -2,7 +2,15 @@ import { defineOSDDNuxtConfig } from 'nuxt-osdd'
 
 export default defineOSDDNuxtConfig({
   osdd: {
-    technical: ['Vuetify', 'Theme', 'Internationalization', 'Pwa', 'State', 'ApiClient', 'RichText'],
+    technical: [
+      'Vuetify',
+      'Theme',
+      'Internationalization',
+      'Pwa',
+      'State',
+      'ApiClient',
+      'RichText',
+    ],
     functional: ['Home', 'Account', 'Catalog', 'Authoring', 'Moderation', 'Learning'],
   },
   compatibilityDate: '2025-07-15',
