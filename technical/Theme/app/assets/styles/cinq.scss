@@ -44,11 +44,13 @@ textarea {
   box-sizing: border-box;
 }
 
-a {
+// Vuetify styles sit in cascade layers, which any unlayered rule beats: link buttons keep
+// the colours of their Vuetify variant.
+a:not(.v-btn) {
   color: var(--cinq-ink);
 }
 
-a:hover {
+a:not(.v-btn):hover {
   color: #1d4ed8;
 }
 

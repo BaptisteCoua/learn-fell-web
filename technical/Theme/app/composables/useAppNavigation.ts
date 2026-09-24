@@ -40,8 +40,9 @@ export const useAppNavigation = () => {
     { label: t('account'), to: sessionStore.isSignedIn ? '/compte' : '/connexion' },
   ])
 
+  // An anchor on the landing page (`/#methode`) is a place in a page, never the current page.
   const isActive = (link: INavigationLink): boolean =>
-    link.to !== '/' && route.path.startsWith(link.to.split('#')[0] ?? link.to)
+    !link.to.includes('#') && link.to !== '/' && route.path.startsWith(link.to)
 
   return {
     headerLinks,

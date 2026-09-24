@@ -1,7 +1,8 @@
 /**
  * One fetch for every API call: laravel-raom-nuxt models and the Fortify account
  * endpoints alike. Sanctum SPA sessions need the session cookie, the XSRF header,
- * and — during SSR — the browser cookie and front-end origin forwarded to the API.
+ * and — during SSR, once the browser has a session — its cookie and the front-end origin
+ * forwarded to the API.
  */
 export default defineNuxtPlugin({
   name: 'laravel-raom',
@@ -36,7 +37,9 @@ export default defineNuxtPlugin({
           headers.set('X-XSRF-TOKEN', xsrfToken)
         }
 
-        if (import.meta.server) {
+        // A visitor's first page has no Sanctum session yet: calling as the front-end origin
+        // would make Sanctum demand a CSRF token the server cannot have, so it calls as a guest.
+        if (import.meta.server && xsrfToken !== null) {
           headers.set('Origin', frontOrigin)
           headers.set('Referer', `${frontOrigin}/`)
 
