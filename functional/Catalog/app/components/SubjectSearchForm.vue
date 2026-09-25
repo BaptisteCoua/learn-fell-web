@@ -68,6 +68,7 @@ const { text, submit } = useSearchForm(props.targetPath, props.initialText)
 
   &__button {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;

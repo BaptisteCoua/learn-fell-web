@@ -135,14 +135,13 @@ const { relativeDay } = useRelativeDay()
 
     // Two long labels in a narrow column: smaller type, allowed to wrap.
     :deep(.v-btn) {
-      height: auto;
-      padding-block: 0.5rem;
+      padding-inline: 0.625rem;
       font-size: 0.8125rem;
       letter-spacing: 0;
     }
 
     :deep(.v-btn__content) {
-      white-space: normal;
+      hyphens: auto;
     }
   }
 

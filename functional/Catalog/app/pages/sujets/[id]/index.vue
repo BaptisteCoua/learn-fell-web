@@ -252,6 +252,11 @@ useHead({ title: subject.title })
   }
 
   @media (max-width: 959px) {
+    // Twelve columns' gaps alone would be wider than a phone.
+    &__hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     &__heading,
     &__aside {
       grid-column: 1 / -1;
