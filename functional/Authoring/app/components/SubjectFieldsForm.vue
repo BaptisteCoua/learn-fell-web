@@ -81,6 +81,8 @@ const descriptionId = useId()
   &__row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    // Each field keeps its own height: a hint under one must not stretch its neighbour.
+    align-items: start;
     gap: 1.5rem;
   }
 

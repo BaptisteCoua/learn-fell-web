@@ -159,9 +159,35 @@ pre {
   text-transform: uppercase;
 }
 
-.v-field {
+// Fields as in the mock-up: a 4px ink border in every state. Vuetify sets these variables on
+// the outline itself, so that is where they are overridden.
+.v-field__outline,
+.v-field:hover .v-field__outline,
+.v-field--variant-outlined.v-field--focused .v-field__outline {
   --v-field-border-width: 4px;
   --v-field-border-opacity: 1;
+}
+
+.v-field--variant-outlined {
+  background: var(--cinq-white);
+}
+
+// Keyboard focus rings the whole field, like every other control, not the text inside it.
+.v-field input:focus-visible,
+.v-field textarea:focus-visible {
+  outline: none;
+}
+
+.v-field--focused {
+  outline: 4px solid var(--cinq-blue);
+  outline-offset: 3px;
+}
+
+// Drop-down lists of selects and comboboxes: same border and shadow as the cards.
+.v-menu > .v-overlay__content > .v-list {
+  border: var(--cinq-border);
+  border-radius: 0;
+  box-shadow: var(--cinq-shadow);
 }
 
 @media (prefers-reduced-motion: reduce) {
