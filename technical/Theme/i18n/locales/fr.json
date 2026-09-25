@@ -1,5 +1,6 @@
 {
   "account": "Compte",
+  "add": "Ajouter",
   "back to home": "Retour à l'accueil",
   "cancel": "Annuler",
   "catalogue": "Catalogue",
@@ -11,6 +12,7 @@
   "edit": "Modifier",
   "error {code}": "Erreur {code}",
   "explore the catalogue": "Explorer le catalogue",
+  "got it": "Compris",
   "log in": "Se connecter",
   "main navigation": "Navigation principale",
   "moderation": "Modération",
@@ -18,6 +20,7 @@
   "my reviews": "Mes révisions",
   "my subjects": "Mes sujets",
   "review": "Réviser",
+  "save": "Enregistrer",
   "something went wrong": "Une erreur est survenue",
   "subjects": "Sujets",
   "the method": "La méthode",
