@@ -19,9 +19,8 @@
         <NuxtLink to="/sujets/nouveau" class="app-header__cell app-header__cell--yellow">
           {{ $t('create a subject') }}
         </NuxtLink>
-        <NuxtLink to="/compte" :aria-label="$t('my account')" class="app-header__avatar">
-          {{ initials }}
-        </NuxtLink>
+        <!-- The account menu belongs to the Account layer, like the pages it opens. -->
+        <AccountMenu />
       </template>
       <template v-else>
         <NuxtLink to="/connexion" class="app-header__cell">{{ $t('log in') }}</NuxtLink>
@@ -34,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-const { headerLinks, isActive, isSignedIn, initials } = useAppNavigation()
+const { headerLinks, isActive, isSignedIn } = useAppNavigation()
 </script>
 
 <style scoped lang="scss">
@@ -85,19 +84,6 @@ const { headerLinks, isActive, isSignedIn, initials } = useAppNavigation()
     &--yellow {
       background: var(--cinq-yellow);
     }
-  }
-
-  &__avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 88px;
-    border-left: var(--cinq-border);
-    background: var(--cinq-blue);
-    font-family: var(--cinq-font-display);
-    font-size: 1.375rem;
-    font-weight: 900;
-    text-decoration: none;
   }
 }
 </style>
