@@ -49,6 +49,7 @@ export default defineNuxtConfig({
         VTextarea: { variant: 'outlined', rounded: 0 },
         VSelect: { variant: 'outlined', rounded: 0 },
         VAutocomplete: { variant: 'outlined', rounded: 0 },
+        VCombobox: { variant: 'outlined', rounded: 0 },
         VDialog: { maxWidth: 640 },
       },
     },
