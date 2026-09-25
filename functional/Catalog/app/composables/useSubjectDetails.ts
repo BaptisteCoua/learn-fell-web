@@ -23,6 +23,7 @@ export const useSubjectDetails = async (subjectId: number) => {
     publishedOn,
     isVisitor: computed(() => !sessionStore.isSignedIn),
     isAuthor: computed(() => sessionStore.user?.id === subject.author_id),
+    isModerator: computed(() => sessionStore.can('subjects.moderate')),
     ...reveal,
   }
 }

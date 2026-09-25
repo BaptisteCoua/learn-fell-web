@@ -1,3 +1,5 @@
+import { PayloadCache } from 'laravel-raom-nuxt/runtime'
+
 /**
  * One fetch for every API call: laravel-raom-nuxt models and the Fortify account
  * endpoints alike. Sanctum SPA sessions need the session cookie, the XSRF header,
@@ -6,7 +8,7 @@
  */
 export default defineNuxtPlugin({
   name: 'laravel-raom',
-  setup() {
+  setup(nuxtApp) {
     const { apiBaseUrl } = useRuntimeConfig().public
     const apiOrigin = new URL(apiBaseUrl).origin
     const requestHeaders = import.meta.server ? useRequestHeaders(['cookie']) : {}
@@ -51,6 +53,13 @@ export default defineNuxtPlugin({
         options.headers = headers
       },
     })
+
+    // raom hands the server's answers to the browser so hydration needs no second call, then
+    // keeps them for the whole visit: a list read again after a write elsewhere (a decision,
+    // an action) would come back stale. They only serve hydration, so they go once it is done.
+    if (import.meta.client) {
+      nuxtApp.hook('app:suspense:resolve', () => PayloadCache.clear())
+    }
 
     return {
       provide: {

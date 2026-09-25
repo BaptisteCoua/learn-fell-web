@@ -8,7 +8,15 @@
         <SubjectStatusBadge :status />
         <span>{{ statusText }}</span>
       </div>
-      <div class="subject-editor__actions">
+      <SubjectModerationPanel
+        v-if="isModerating"
+        :subject-id="subject.id"
+        :title="subject.title"
+        :status
+        :with-edit="false"
+        @status="setStatus"
+      />
+      <div v-else class="subject-editor__actions">
         <template v-if="status === 'draft'">
           <v-btn variant="outlined" size="large" @click="openDialog('delete-subject')">{{
             $t('delete the subject')
@@ -31,6 +39,17 @@
       </div>
     </section>
 
+    <AccountNotice
+      v-if="isModerating"
+      tone="info"
+      :title="
+        $t('administrator mode: you are editing the subject of {name}.', {
+          name: subject.author.display_name,
+        })
+      "
+      :text="$t('your changes are visible to everyone if the subject is published.')"
+      class="subject-editor__retired"
+    />
     <AccountNotice
       v-if="isReadOnly"
       tone="error"
@@ -187,6 +206,7 @@ const {
   questions,
   categories,
   status,
+  isModerating,
   isReadOnly,
   form,
   draft,
@@ -201,6 +221,7 @@ const {
   publishSubject,
   unpublishSubject,
   confirmDeleteSubject,
+  setStatus,
   openDialog,
   closeDialog,
 } = await useSubjectEditor(Number(route.params.id))
