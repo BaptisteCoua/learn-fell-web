@@ -41,6 +41,7 @@
   "this subject has no question yet.": "Ce sujet n'a pas encore de question.",
   "type at least 2 characters to search.": "Saisissez au moins 2 caractères pour lancer la recherche.",
   "verso": "Verso",
+  "you are the author of this subject.": "Vous êtes l'auteur de ce sujet.",
   "{count} questions": "{count} questions",
   "{count} subjects | {count} subject | {count} subjects": "{count} sujet | {count} sujet | {count} sujets"
 }

@@ -11,6 +11,7 @@ export const useAccountMenu = () => {
   const { t } = useI18n()
   const sessionStore = useSessionStore()
   const { logout } = useAuth()
+  const { notify } = useToast()
 
   const links = computed<IAccountLink[]>(() => [
     { label: t('my subjects'), to: '/mes-sujets' },
@@ -31,6 +32,7 @@ export const useAccountMenu = () => {
 
   const logOut = async (): Promise<void> => {
     await logout()
+    notify(t('you are logged out. see you soon on cinq.'))
     await navigateTo('/')
   }
 

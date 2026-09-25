@@ -37,11 +37,28 @@
           <NuxtLink v-if="isVisitor" to="/connexion" class="subject-page__report-link">
             {{ $t('log in to report this subject') }}
           </NuxtLink>
+          <template v-if="isAuthor">
+            <v-btn
+              :to="`/sujets/${subject.id}/modifier`"
+              color="secondary"
+              size="x-large"
+              prepend-icon="mdi-pencil"
+            >
+              {{ $t('edit') }}
+            </v-btn>
+            <strong>{{ $t('you are the author of this subject.') }}</strong>
+          </template>
         </div>
       </aside>
     </section>
 
-    <section v-if="isVisitor" :aria-label="$t('learning')" class="subject-page__learn">
+    <!-- Learning a subject belongs to the Learning layer, like the review pages. -->
+    <LearnSubjectPanel
+      v-if="!isVisitor"
+      :subject-id="subject.id"
+      :question-count="questions.length"
+    />
+    <section v-else :aria-label="$t('learning')" class="subject-page__learn">
       <strong class="subject-page__learn-title">{{ $t('learn this subject') }}</strong>
       <span>
         {{
@@ -85,6 +102,7 @@ const {
   questions,
   publishedOn,
   isVisitor,
+  isAuthor,
   isRevealed,
   areAllRevealed,
   toggle,
@@ -234,6 +252,11 @@ useHead({ title: subject.title })
   }
 
   @media (max-width: 959px) {
+    // Twelve columns' gaps alone would be wider than a phone.
+    &__hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     &__heading,
     &__aside {
       grid-column: 1 / -1;

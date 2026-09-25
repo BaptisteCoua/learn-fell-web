@@ -96,14 +96,43 @@ pre {
 }
 
 // Buttons side by side in a card share its width and line up with the content above.
+// When each would get less than 9rem, they stack instead, full width.
 .cinq-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .cinq-actions > * {
   flex: 1 1 0;
-  min-width: 0;
+  min-width: min(100%, 9rem);
+}
+
+// On phones a long single word ("précédente", "d'apprendre") still has to fit its half.
+@media (max-width: 599px) {
+  .cinq-actions > .v-btn {
+    padding-inline: 0.625rem;
+    letter-spacing: 0;
+  }
+
+  .cinq-actions > .v-btn .v-btn__content {
+    hyphens: auto;
+  }
+}
+
+// A label longer than the room it has wraps instead of being cut (phones, narrow columns):
+// the button grows, never below its Vuetify height. Icon buttons keep their square.
+.v-btn:not(.v-btn--icon) {
+  height: auto;
+  min-height: calc(var(--v-btn-height) + 0px);
+  max-width: 100%;
+  padding-block: 0.5rem;
+}
+
+.v-btn:not(.v-btn--icon) .v-btn__content {
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: break-word;
 }
 
 .v-btn {
