@@ -52,7 +52,13 @@
       </aside>
     </section>
 
-    <section v-if="isVisitor" :aria-label="$t('learning')" class="subject-page__learn">
+    <!-- Learning a subject belongs to the Learning layer, like the review pages. -->
+    <LearnSubjectPanel
+      v-if="!isVisitor"
+      :subject-id="subject.id"
+      :question-count="questions.length"
+    />
+    <section v-else :aria-label="$t('learning')" class="subject-page__learn">
       <strong class="subject-page__learn-title">{{ $t('learn this subject') }}</strong>
       <span>
         {{
