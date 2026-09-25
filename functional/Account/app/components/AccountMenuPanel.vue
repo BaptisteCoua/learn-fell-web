@@ -21,6 +21,11 @@
         {{ link.label }}
       </NuxtLink>
     </template>
+    <ClientOnly>
+      <button v-if="canInstall" type="button" class="account-menu-panel__item" @click="install">
+        <v-icon icon="mdi-cellphone-arrow-down" />{{ $t('install the application') }}
+      </button>
+    </ClientOnly>
     <button
       type="button"
       class="account-menu-panel__item account-menu-panel__logout"
@@ -33,6 +38,7 @@
 
 <script setup lang="ts">
 const { user, initials, links, adminLinks, logOut } = useAccountMenu()
+const { canInstall, install } = usePwaInstall()
 </script>
 
 <style scoped lang="scss">
@@ -69,6 +75,7 @@ const { user, initials, links, adminLinks, logOut } = useAccountMenu()
     display: flex;
     flex-direction: column;
     min-width: 0;
+    overflow-wrap: anywhere;
     font-size: 0.9375rem;
 
     strong {
@@ -91,6 +98,7 @@ const { user, initials, links, adminLinks, logOut } = useAccountMenu()
     font-weight: 700;
     text-align: left;
     text-decoration: none;
+    cursor: pointer;
 
     &--admin {
       background: var(--cinq-yellow);

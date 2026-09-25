@@ -37,7 +37,7 @@ const number = computed(() => String(props.index + 1).padStart(2, '0'))
 <style scoped lang="scss">
 .question-item {
   display: grid;
-  grid-template-columns: clamp(3.5rem, 8vw, 6rem) minmax(0, 1fr);
+  grid-template-columns: clamp(2.5rem, 8vw, 6rem) minmax(0, 1fr);
   border: var(--cinq-border);
   background: var(--cinq-white);
   box-shadow: 8px 8px 0 var(--cinq-ink);
@@ -69,7 +69,8 @@ const number = computed(() => String(props.index + 1).padStart(2, '0'))
   }
 
   &__question {
-    flex: 1 1 18rem;
+    flex: 1 1 min(100%, 18rem);
+    min-width: 0;
     font-family: var(--cinq-font-display);
     font-size: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
     font-weight: 800;

@@ -111,7 +111,8 @@ const tools = computed<{ mark: RichTextMark; icon: string; label: string }[]>(()
   }
 
   &__link-input {
-    flex: 1 1 12rem;
+    flex: 1 1 min(100%, 12rem);
+    min-width: 0;
     min-height: 2.5rem;
     padding: 0 0.75rem;
     border: 3px solid var(--cinq-ink);

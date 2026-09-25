@@ -42,7 +42,9 @@ defineProps({
   gap: 0.75rem;
 
   &__chip {
+    max-width: 100%;
     padding: 0.75rem 1.25rem;
+    overflow-wrap: anywhere;
     border: 3px solid var(--cinq-ink);
     background: var(--cinq-white);
     font-size: 1.0625rem;

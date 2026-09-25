@@ -184,7 +184,8 @@ useHead({ title: () => t('categories') })
     gap: 0.75rem;
 
     > :first-child {
-      flex: 1 1 12rem;
+      flex: 1 1 min(100%, 12rem);
+      min-width: 0;
     }
   }
 

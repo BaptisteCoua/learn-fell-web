@@ -13,7 +13,8 @@ defineProps({
 <style scoped lang="scss">
 .rich-text-view {
   line-height: 1.5;
-  overflow-wrap: break-word;
+  // "anywhere" also lowers the minimum width, so a long word never pushes the page sideways.
+  overflow-wrap: anywhere;
 
   :deep(p) {
     margin: 0 0 0.5rem;

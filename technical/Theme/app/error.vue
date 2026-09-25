@@ -44,7 +44,10 @@ const props = defineProps({
   error: { type: Object as PropType<NuxtError>, required: true },
 })
 
+const { t } = useI18n()
 const { isNotFound, leaveTo } = useErrorPage(props.error)
+
+useHead({ title: () => (isNotFound.value ? t('content not found') : t('something went wrong')) })
 </script>
 
 <style scoped lang="scss">

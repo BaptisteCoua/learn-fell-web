@@ -48,7 +48,7 @@
         autocomplete="current-password"
       >
         <template #aside>
-          <NuxtLink to="/mot-de-passe-oublie" class="account-form__link">
+          <NuxtLink to="/mot-de-passe-oublie" class="account-form__link cinq-standalone-link">
             {{ $t('forgot your password?') }}
           </NuxtLink>
         </template>

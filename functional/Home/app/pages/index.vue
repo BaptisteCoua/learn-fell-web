@@ -99,7 +99,10 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n()
 const { latestSubjects, authors, isVisitor, leitnerBoxes } = await useLandingPage()
+
+useHead({ title: () => t('learn everything, remember everything'), titleTemplate: 'CINQ · %s' })
 </script>
 
 <style scoped lang="scss">

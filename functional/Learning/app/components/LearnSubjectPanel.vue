@@ -97,7 +97,8 @@ const {
 
   &__intro {
     display: flex;
-    flex: 1 1 20rem;
+    flex: 1 1 min(100%, 20rem);
+    min-width: 0;
     flex-direction: column;
     gap: 0.375rem;
     font-size: 1.125rem;
@@ -119,11 +120,13 @@ const {
   }
 
   :deep(.box-bar) {
-    flex: 1 1 22rem;
+    flex: 1 1 min(100%, 22rem);
+    min-width: 0;
   }
 
   .cinq-actions {
-    flex: 1 1 22rem;
+    flex: 1 1 min(100%, 22rem);
+    min-width: 0;
   }
 }
 </style>
