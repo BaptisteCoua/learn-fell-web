@@ -1,1 +1,22 @@
-{}
+{
+  "administration / categories · {count}": "Administration / catégories · {count}",
+  "cannot delete": "Suppression impossible",
+  "category deleted.": "Catégorie supprimée.",
+  "category renamed.": "Catégorie renommée.",
+  "category “{name}” added.": "Catégorie « {name} » ajoutée.",
+  "delete the category": "Supprimer la catégorie",
+  "delete {name}": "Supprimer {name}",
+  "delete “{name}”?": "Supprimer « {name} » ?",
+  "e.g. philosophy": "Ex. : Philosophie",
+  "move {name} down": "Descendre {name}",
+  "move {name} up": "Monter {name}",
+  "new category": "Nouvelle catégorie",
+  "new name of the category": "Nouveau nom de la catégorie",
+  "one level only. two categories cannot share a name, ignoring capitals and accents.": "Un seul niveau. Deux catégories ne peuvent pas porter le même nom, sans tenir compte des majuscules ni des accents.",
+  "rename {name}": "Renommer {name}",
+  "the order below is the one of the catalogue and of the choice offered to authors.": "L'ordre ci-dessous est celui du catalogue et du choix proposé aux auteurs.",
+  "this category holds no subject. it will disappear from the catalogue and from the choice offered to authors.": "Cette catégorie ne contient aucun sujet. Elle disparaîtra du catalogue et du choix proposé aux auteurs.",
+  "type a category name.": "Saisissez un nom de catégorie.",
+  "type a name.": "Saisissez un nom.",
+  "“{name}” holds {count} subjects, whatever their status. a category can be deleted only once it is empty.": "« {name} » contient {count} sujets, tous statuts confondus. Une catégorie ne peut être supprimée que lorsqu'elle est vide."
+}
