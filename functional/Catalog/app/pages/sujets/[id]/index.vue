@@ -37,7 +37,11 @@
           >
             {{ $t('card mode') }}
           </v-btn>
-          <NuxtLink v-if="isVisitor" to="/connexion" class="subject-page__report-link">
+          <NuxtLink
+            v-if="isVisitor"
+            to="/connexion"
+            class="subject-page__report-link cinq-standalone-link"
+          >
             {{ $t('log in to report this subject') }}
           </NuxtLink>
           <!-- Reporting and moderating belong to the Moderation layer. -->

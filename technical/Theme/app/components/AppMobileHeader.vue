@@ -53,7 +53,11 @@ const { isSignedIn, initials } = useAppNavigation()
   &__login {
     display: flex;
     align-items: center;
+    min-width: 0;
     padding: 0 1rem;
+    line-height: 1.1;
+    text-align: right;
+    overflow-wrap: anywhere;
     border-left: var(--cinq-border);
     font-weight: 700;
   }

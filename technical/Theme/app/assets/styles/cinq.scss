@@ -84,10 +84,19 @@ pre {
   outline-offset: 3px;
 }
 
+// A link standing on its own (not inside a sentence) is a 44px target too.
+.cinq-standalone-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 // Tabs and menus reserve the active underline on every entry, so the text never moves.
 .cinq-tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   border-bottom: 4px solid transparent;
-  padding-bottom: 4px;
   text-decoration: none;
 }
 
@@ -124,9 +133,15 @@ pre {
 // the button grows, never below its Vuetify height. Icon buttons keep their square.
 .v-btn:not(.v-btn--icon) {
   height: auto;
-  min-height: calc(var(--v-btn-height) + 0px);
+  // 44px targets at least (FR-052, WCAG 2.5.5), even for Vuetify's small sizes.
+  min-height: max(44px, calc(var(--v-btn-height) + 0px));
   max-width: 100%;
   padding-block: 0.5rem;
+}
+
+.v-btn--icon {
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .v-btn:not(.v-btn--icon) .v-btn__content {

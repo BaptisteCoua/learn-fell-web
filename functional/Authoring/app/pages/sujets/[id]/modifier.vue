@@ -1,7 +1,7 @@
 <template>
   <div class="subject-editor">
     <section class="subject-editor__hero">
-      <NuxtLink to="/mes-sujets" class="subject-editor__back"
+      <NuxtLink to="/mes-sujets" class="subject-editor__back cinq-standalone-link"
         ><v-icon icon="mdi-arrow-left" /> {{ $t('my subjects') }}</NuxtLink
       >
       <div class="subject-editor__status">

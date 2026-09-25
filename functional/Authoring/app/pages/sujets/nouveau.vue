@@ -1,7 +1,7 @@
 <template>
   <div class="new-subject-page">
     <section class="new-subject-page__hero">
-      <NuxtLink to="/mes-sujets" class="new-subject-page__back">
+      <NuxtLink to="/mes-sujets" class="new-subject-page__back cinq-standalone-link">
         <v-icon icon="mdi-arrow-left" /> {{ $t('my subjects') }}
       </NuxtLink>
       <h1 class="new-subject-page__title">{{ $t('new subject') }}</h1>
