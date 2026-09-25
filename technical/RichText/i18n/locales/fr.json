@@ -1,1 +1,12 @@
-{}
+{
+  "apply": "Appliquer",
+  "bold": "Gras",
+  "bulleted list": "Liste à puces",
+  "code block": "Bloc de code",
+  "formatting of {label}": "Mise en forme : {label}",
+  "inline code": "Code en ligne",
+  "italic": "Italique",
+  "link": "Lien",
+  "link address": "Adresse du lien",
+  "numbered list": "Liste numérotée"
+}

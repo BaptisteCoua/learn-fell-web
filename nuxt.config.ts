@@ -10,6 +10,7 @@ export default defineOSDDNuxtConfig({
       'State',
       'ApiClient',
       'RichText',
+      'Notification',
     ],
     functional: ['Home', 'Account', 'Catalog', 'Authoring', 'Moderation', 'Learning'],
   },

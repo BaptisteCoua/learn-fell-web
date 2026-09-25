@@ -37,6 +37,17 @@
           <NuxtLink v-if="isVisitor" to="/connexion" class="subject-page__report-link">
             {{ $t('log in to report this subject') }}
           </NuxtLink>
+          <template v-if="isAuthor">
+            <v-btn
+              :to="`/sujets/${subject.id}/modifier`"
+              color="secondary"
+              size="x-large"
+              prepend-icon="mdi-pencil"
+            >
+              {{ $t('edit') }}
+            </v-btn>
+            <strong>{{ $t('you are the author of this subject.') }}</strong>
+          </template>
         </div>
       </aside>
     </section>
@@ -85,6 +96,7 @@ const {
   questions,
   publishedOn,
   isVisitor,
+  isAuthor,
   isRevealed,
   areAllRevealed,
   toggle,

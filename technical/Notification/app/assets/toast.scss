@@ -1,0 +1,25 @@
+// CINQ toasts: ink border, hard shadow, square corners.
+
+.Toastify__toast {
+  border: var(--cinq-border);
+  border-radius: 0;
+  box-shadow: var(--cinq-shadow);
+  color: var(--cinq-ink);
+  font-family: var(--cinq-font-body);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.Toastify__toast--success {
+  background: var(--cinq-yellow);
+}
+
+.Toastify__toast--error {
+  border-color: var(--cinq-red);
+  background: var(--cinq-white);
+  box-shadow: 6px 6px 0 var(--cinq-red);
+}
+
+.Toastify__toast-icon svg {
+  fill: var(--cinq-ink);
+}
