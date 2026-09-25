@@ -19,7 +19,11 @@ export const useSubjectEditor = async (subjectId: number) => {
     useCategories(),
   ])
 
-  if (subject.author_id !== sessionStore.user?.id) {
+  const isAuthor = subject.author_id === sessionStore.user?.id
+  // A moderator edits any subject (FR-032); anyone else only their own.
+  const isModerating = !isAuthor && sessionStore.can('subjects.moderate')
+
+  if (!isAuthor && !isModerating) {
     throw createError({ statusCode: 404, fatal: true })
   }
 
@@ -34,7 +38,7 @@ export const useSubjectEditor = async (subjectId: number) => {
     description: subject.description,
   })
 
-  const isReadOnly = computed(() => status.value === 'retired')
+  const isReadOnly = computed(() => status.value === 'retired' && !isModerating)
 
   const reloadQuestions = async (): Promise<void> => {
     const [data] = await nuxtApp.runWithContext(() =>
@@ -140,6 +144,10 @@ export const useSubjectEditor = async (subjectId: number) => {
     draft.start('new')
   }
 
+  const setStatus = (newStatus: SubjectStatus): void => {
+    status.value = newStatus
+  }
+
   const openDialog = (kind: EditorDialog): void => {
     dialog.value = kind
   }
@@ -153,6 +161,7 @@ export const useSubjectEditor = async (subjectId: number) => {
     questions,
     categories,
     status,
+    isModerating,
     isReadOnly,
     form,
     draft,
@@ -167,6 +176,7 @@ export const useSubjectEditor = async (subjectId: number) => {
     publishSubject,
     unpublishSubject,
     confirmDeleteSubject,
+    setStatus,
     openDialog,
     closeDialog,
   }

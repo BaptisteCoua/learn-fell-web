@@ -2,6 +2,9 @@
   <div>
     <section class="subject-page__hero">
       <div class="subject-page__heading">
+        <strong v-if="subject.status === 'retired'" class="subject-page__retired">
+          {{ $t('retired by the moderation: {reason}', { reason: subject.retired_reason ?? '' }) }}
+        </strong>
         <nav :aria-label="$t('breadcrumb')" class="subject-page__breadcrumb">
           <NuxtLink to="/categories">{{ $t('catalogue') }}</NuxtLink> /
           <NuxtLink :to="`/categories/${subject.category.id}`">{{
@@ -37,6 +40,14 @@
           <NuxtLink v-if="isVisitor" to="/connexion" class="subject-page__report-link">
             {{ $t('log in to report this subject') }}
           </NuxtLink>
+          <!-- Reporting and moderating belong to the Moderation layer. -->
+          <ReportSubjectDialog v-if="!isVisitor && !isAuthor" :subject-id="subject.id" />
+          <SubjectModerationPanel
+            v-if="isModerator && !isAuthor"
+            :subject-id="subject.id"
+            :title="subject.title"
+            :status="subject.status"
+          />
           <template v-if="isAuthor">
             <v-btn
               :to="`/sujets/${subject.id}/modifier`"
@@ -103,6 +114,7 @@ const {
   publishedOn,
   isVisitor,
   isAuthor,
+  isModerator,
   isRevealed,
   areAllRevealed,
   toggle,
@@ -129,6 +141,13 @@ useHead({ title: subject.title })
     grid-column: span 8;
     gap: 1.25rem;
     min-width: 0;
+  }
+
+  &__retired {
+    align-self: flex-start;
+    padding: 0.5rem 0.875rem;
+    background: var(--cinq-ink);
+    color: var(--cinq-cream);
   }
 
   &__breadcrumb {

@@ -4,6 +4,7 @@
   "add a question": "Ajouter une question",
   "add at least one question to be able to publish this subject.": "Ajoutez au moins une question pour pouvoir publier ce sujet.",
   "add questions": "Ajouter des questions",
+  "administrator mode: you are editing the subject of {name}.": "Mode administrateur : vous modifiez le sujet de {name}.",
   "all subjects filter": "Tous",
   "author space": "Espace auteur",
   "between 3 and 120 characters.": "Entre 3 et 120 caractères.",
@@ -77,6 +78,7 @@
   "view the public page": "Voir la page publique",
   "what you typed is kept. check your connection, then try again.": "Votre saisie est conservée. Vérifiez votre connexion, puis réessayez.",
   "you cannot publish it again: only an administrator can restore it.": "Vous ne pouvez pas le republier : seul un administrateur peut le rétablir.",
+  "your changes are visible to everyone if the subject is published.": "Vos modifications sont visibles de tous si le sujet est publié.",
   "your subject will be created as a draft.": "Votre sujet sera créé en brouillon.",
   "“{title}” and its {count} questions will be deleted for good. this cannot be undone.": "« {title} » et ses {count} questions seront supprimés définitivement. Cette action est irréversible.",
   "“{title}” has no question. add at least one before publishing it.": "« {title} » ne contient aucune question. Ajoutez-en au moins une avant de le publier."
