@@ -3,8 +3,11 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
-      name: 'Learn Fell',
-      short_name: 'Learn Fell',
+      name: 'CINQ',
+      short_name: 'CINQ',
+      description: 'Apprenez tout, retenez tout, avec la méthode Leitner.',
+      theme_color: '#FACC15',
+      background_color: '#FFFBEB',
       lang: 'fr',
       display: 'standalone',
       start_url: '/',

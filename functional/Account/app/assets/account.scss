@@ -1,0 +1,38 @@
+// Shared by the account pages (login, sign-up, confirmation, password reset).
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.account-form__intro {
+  margin: 0;
+  font-size: 1.1875rem;
+  line-height: 1.5;
+}
+
+.account-form__footnote {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+.account-form__link {
+  font-weight: 700;
+}
+
+.account-form__conflict {
+  margin: 0;
+  padding: 0.625rem 0.875rem;
+  background: var(--cinq-ink);
+  color: var(--cinq-cream);
+  font-size: 0.9375rem;
+  line-height: 1.4;
+
+  a:not(.v-btn),
+  a:not(.v-btn):hover {
+    color: var(--cinq-yellow);
+    font-weight: 700;
+  }
+}

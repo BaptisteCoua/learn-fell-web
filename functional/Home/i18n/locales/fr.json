@@ -1,5 +1,25 @@
 {
-  "home": {
-    "title": "Bienvenue sur Learn Fell"
-  }
+  "01 — featured": "01 — À la une",
+  "02 — the method": "02 — La méthode",
+  "03 — the authors": "03 — Les auteurs",
+  "04 — join us": "04 — Rejoignez-nous",
+  "every 16 days": "Tous les 16 jours",
+  "every 2 days": "Tous les 2 jours",
+  "every 4 days": "Tous les 4 jours",
+  "every 8 days": "Tous les 8 jours",
+  "every day": "Chaque jour",
+  "everything.": "tout.",
+  "five boxes.": "Cinq boîtes.",
+  "latest subjects": "Sujets du moment",
+  "learn": "Apprenez",
+  "no subject has been published yet.": "Aucun sujet n'est encore publié.",
+  "nothing forgotten.": "Zéro oubli.",
+  "public learning space": "Espace public d'apprentissage",
+  "questions written by the community, sorted by subject. read freely, without an account. create your own subjects and share them.": "Des questions écrites par la communauté, rangées par sujet. Lisez librement, sans compte. Créez vos propres sujets et partagez-les.",
+  "remember": "Retenez",
+  "start reviewing today": "Commencez à réviser aujourd'hui",
+  "the leitner system: a card you get right moves up a box and comes back later. a card you miss goes back to box 1. you review what you forget, not what you already know.": "Le système Leitner : une carte réussie monte d'une boîte et revient plus tard. Une carte ratée retourne en boîte 1. Vous révisez ce que vous oubliez, pas ce que vous savez déjà.",
+  "the whole catalogue": "Tout le catalogue",
+  "what year did the berlin wall fall?": "En quelle année tombe le mur de Berlin ?",
+  "written by the community": "Écrit par la communauté"
 }
