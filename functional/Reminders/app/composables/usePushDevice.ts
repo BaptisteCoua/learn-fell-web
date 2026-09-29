@@ -19,6 +19,7 @@ export const usePushDevice = () => {
 
   const problem = ref<PushDeviceProblem>(null)
   const currentEndpoint = ref<string | null>(null)
+  const isReady = ref(false)
 
   const isSupported = computed(
     () =>
@@ -37,8 +38,15 @@ export const usePushDevice = () => {
   const registration = async (): Promise<ServiceWorkerRegistration | undefined> =>
     isSupported.value ? navigator.serviceWorker.getRegistration() : undefined
 
-  const readCurrent = async (): Promise<void> => {
-    const subscription = await (await registration())?.pushManager.getSubscription()
+  /**
+   * Whether this browser can be subscribed now, and which device of the list it is. Besides the
+   * browser's APIs, it takes the service worker of the production build and the VAPID key.
+   */
+  const inspect = async (): Promise<void> => {
+    const serviceWorker = await registration()
+    const subscription = await serviceWorker?.pushManager.getSubscription()
+
+    isReady.value = serviceWorker !== undefined && vapidPublicKey !== ''
     currentEndpoint.value = subscription?.endpoint ?? null
   }
 
@@ -114,5 +122,5 @@ export const usePushDevice = () => {
     currentEndpoint.value = null
   }
 
-  return { problem, isSupported, needsInstall, isCurrent, readCurrent, enable, forget }
+  return { problem, isSupported, isReady, needsInstall, isCurrent, inspect, enable, forget }
 }

@@ -75,6 +75,9 @@ export const ANDROID_CHROME =
 export const IPHONE_SAFARI =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'
 
+const TEST_VAPID_PUBLIC_KEY =
+  'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U'
+
 // Own properties shadow the prototype's getters, and keep the rest of happy-dom's navigator.
 const setNavigator = (property: string, value: unknown): void => {
   Object.defineProperty(window.navigator, property, { value, configurable: true })
@@ -116,8 +119,20 @@ export const stubPushBrowser = ({
   const registration = { pushManager: { getSubscription: async () => current, subscribe } }
   setNavigator('userAgent', userAgent)
   setNavigator('serviceWorker', { getRegistration: async () => registration })
+  useRuntimeConfig().public.vapidPublicKey = TEST_VAPID_PUBLIC_KEY
 
   return { requestPermission, subscribe, unsubscribe }
+}
+
+/**
+ * A browser that could show notifications, but without the service worker of the production
+ * build, as under `pnpm dev`.
+ */
+export const stubBrowserWithoutServiceWorker = () => {
+  const push = stubPushBrowser()
+  setNavigator('serviceWorker', { getRegistration: async () => undefined })
+
+  return push
 }
 
 /**

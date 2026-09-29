@@ -11,11 +11,24 @@
           }}
         </p>
         <ReminderChoice
+          v-if="canOfferPush"
           v-model="wantsPush"
           name="reminder-push"
           :label="$t('notifications on this device')"
           :disabled="isSaving"
         />
+        <div v-else-if="needsInstall" role="status" class="reminder-proposal__install">
+          <p>
+            {{
+              $t(
+                'on iphone and ipad, notifications only work once cinq is installed on the home screen.',
+              )
+            }}
+          </p>
+          <v-btn variant="outlined" size="large" @click="showInstallSteps">{{
+            $t('see how to install')
+          }}</v-btn>
+        </div>
         <ReminderChoice
           v-model="wantsEmail"
           name="reminder-email"
@@ -53,8 +66,20 @@
 </template>
 
 <script setup lang="ts">
-const { isOpen, wantsPush, wantsEmail, sendTime, isSaving, canActivate, problem, activate, later } =
-  useReminderProposal()
+const {
+  isOpen,
+  canOfferPush,
+  needsInstall,
+  wantsPush,
+  wantsEmail,
+  sendTime,
+  isSaving,
+  canActivate,
+  problem,
+  activate,
+  later,
+  showInstallSteps,
+} = useReminderProposal()
 </script>
 
 <style scoped lang="scss">
@@ -84,6 +109,16 @@ const { isOpen, wantsPush, wantsEmail, sendTime, isSaving, canActivate, problem,
     p {
       margin: 0;
     }
+  }
+
+  &__install {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border: 3px solid var(--cinq-ink);
+    background: var(--cinq-blue);
   }
 
   &__problem {

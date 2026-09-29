@@ -62,6 +62,9 @@
       <p v-else-if="!isSupported" role="status" class="account-reminders__notice">
         {{ $t('this browser cannot show notifications.') }}
       </p>
+      <p v-else-if="!isReady" role="status" class="account-reminders__notice">
+        {{ $t('notifications cannot be turned on for the moment on this device.') }}
+      </p>
       <v-btn
         v-else-if="canEnableHere"
         color="secondary"
@@ -86,6 +89,7 @@ const {
   problem,
   needsInstall,
   isSupported,
+  isReady,
   isCurrent,
   canEnableHere,
   isBusy,

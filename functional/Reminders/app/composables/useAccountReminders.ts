@@ -13,7 +13,7 @@ export const useAccountReminders = async () => {
 
   const canEnableHere = computed(
     () =>
-      pushDevice.isSupported.value &&
+      pushDevice.isReady.value &&
       !settings.devices.value.some((device) => pushDevice.isCurrent(device)),
   )
 
@@ -69,7 +69,7 @@ export const useAccountReminders = async () => {
   await settings.load()
 
   if (import.meta.client) {
-    await pushDevice.readCurrent()
+    await pushDevice.inspect()
   }
 
   return {
@@ -79,6 +79,7 @@ export const useAccountReminders = async () => {
     problem: pushDevice.problem,
     needsInstall: pushDevice.needsInstall,
     isSupported: pushDevice.isSupported,
+    isReady: pushDevice.isReady,
     isCurrent: pushDevice.isCurrent,
     canEnableHere,
     isBusy,

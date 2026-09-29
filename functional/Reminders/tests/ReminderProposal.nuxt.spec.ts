@@ -4,7 +4,10 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import LearnSubjectPanel from '../../Learning/app/components/LearnSubjectPanel.vue'
 import {
   aReminderSetting,
+  IPHONE_SAFARI,
   signIn,
+  stubBrowserWithoutPush,
+  stubBrowserWithoutServiceWorker,
   stubPushBrowser,
   stubRemindersApi,
   type IApiCall,
@@ -73,6 +76,7 @@ const mutations = (calls: IApiCall[]) =>
 
 describe('ReminderProposal', () => {
   beforeEach(() => {
+    clearNuxtState()
     document.body.innerHTML = ''
     signIn()
     stubPushBrowser()
@@ -154,6 +158,59 @@ describe('ReminderProposal', () => {
       { name: 'content_encoding', value: 'aes128gcm' },
       { name: 'device_label', value: 'Chrome sur Android' },
     ])
+  })
+
+  it('turns the email on even when this device could not be registered', async () => {
+    stubPushBrowser({ permission: 'denied' })
+    const { calls } = await learnTheSubject()
+
+    tick('reminder-push')
+    tick('reminder-email')
+    await flushPromises()
+    proposalButton('Activer')?.click()
+    await flushPromises()
+
+    expect(mutations(calls)[0]).toMatchObject({
+      mutate: [{ operation: 'update', key: 3, attributes: { email_enabled: true } }],
+    })
+    expect(calls.some((call) => call.path === 'push-subscriptions/actions/register-device')).toBe(
+      false,
+    )
+    expect(isProposalOpen()).toBe(false)
+  })
+
+  it('stays open and says why when only the notifications were chosen and refused', async () => {
+    stubPushBrowser({ permission: 'denied' })
+    const { calls } = await learnTheSubject()
+
+    tick('reminder-push')
+    await flushPromises()
+    proposalButton('Activer')?.click()
+    await flushPromises()
+
+    expect(isProposalOpen()).toBe(true)
+    expect(proposal()?.textContent).toContain('Les notifications sont bloquées pour ce site.')
+    expect(mutations(calls)).toEqual([])
+  })
+
+  it('offers the email only where notifications cannot work, as without the service worker', async () => {
+    stubBrowserWithoutServiceWorker()
+    await learnTheSubject()
+
+    expect(isProposalOpen()).toBe(true)
+    expect(proposal()!.querySelector('input[name="reminder-push"]')).toBeNull()
+    expect(proposal()!.querySelector('input[name="reminder-email"]')).not.toBeNull()
+  })
+
+  it('asks to install CINQ first on an iPhone outside the installed app', async () => {
+    stubBrowserWithoutPush(IPHONE_SAFARI)
+    await learnTheSubject()
+
+    expect(proposal()!.querySelector('input[name="reminder-push"]')).toBeNull()
+    expect(proposal()?.textContent).toContain(
+      "Sur iPhone et iPad, les notifications ne fonctionnent qu'une fois CINQ installé sur l'écran d'accueil.",
+    )
+    expect(proposalButton('Voir comment installer')).toBeDefined()
   })
 
   it('is not offered again once seen', async () => {

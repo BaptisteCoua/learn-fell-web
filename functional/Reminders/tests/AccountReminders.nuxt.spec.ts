@@ -8,6 +8,7 @@ import {
   IPHONE_SAFARI,
   signIn,
   stubBrowserWithoutPush,
+  stubBrowserWithoutServiceWorker,
   stubPushBrowser,
   stubRemindersApi,
   type IApiCall,
@@ -114,6 +115,16 @@ describe('AccountReminders', () => {
     )
     expect(button(section, 'Voir comment installer')).toBeDefined()
     expect(button(section, 'Activer sur cet appareil')).toBeUndefined()
+  })
+
+  it('offers no activation where this device cannot be subscribed yet', async () => {
+    stubBrowserWithoutServiceWorker()
+    const { section } = await mountSection()
+
+    expect(button(section, 'Activer sur cet appareil')).toBeUndefined()
+    expect(section.text()).toContain(
+      "Les notifications ne peuvent pas être activées pour l'instant sur cet appareil.",
+    )
   })
 
   it('lists every device, recognises this one, and turns each off separately', async () => {
