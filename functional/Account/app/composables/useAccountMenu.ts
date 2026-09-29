@@ -16,6 +16,7 @@ export const useAccountMenu = () => {
   const links = computed<IAccountLink[]>(() => [
     { label: t('my subjects'), to: '/mes-sujets' },
     { label: t('create a subject'), to: '/sujets/nouveau' },
+    { label: t('review reminders'), to: '/compte#rappels' },
   ])
 
   const adminLinks = computed<IAccountLink[]>(() => [

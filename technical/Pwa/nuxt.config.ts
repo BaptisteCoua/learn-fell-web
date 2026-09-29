@@ -41,6 +41,8 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
+      // The review reminders of 002: shown on a push, opened on a click.
+      importScripts: ['sw-push.js'],
       // Pages are rendered by the server: no app shell for every navigation, only a fallback
       // when the network is gone (FR-039). Subjects are not readable offline in 001.
       navigateFallback: null,
