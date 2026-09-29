@@ -20,7 +20,7 @@ pnpm dev          # http://localhost:3000, API expected on http://localhost:8090
 pnpm build        # generates sw.js and manifest.webmanifest
 ```
 
-Copy `.env.example` to `.env` and set `NUXT_PUBLIC_VAPID_PUBLIC_KEY` to the back's `VAPID_PUBLIC_KEY`, for the review reminders. Push notifications only work with the service worker, which exists in the production build alone (`pnpm build && PORT=3000 node .output/server/index.mjs`); under `pnpm dev`, the reminders offer the email only. `technical/Pwa/public/sw-push.js` is imported into the generated service worker and shows the pushed messages.
+Copy `.env.example` to `.env` and set `NUXT_PUBLIC_VAPID_PUBLIC_KEY` to the back's `VAPID_PUBLIC_KEY`, for the review reminders. Push notifications only work with the service worker, which exists in the production build alone (`pnpm build && PORT=3000 node --env-file=.env .output/server/index.mjs`: the built server does not read `.env` by itself); under `pnpm dev`, the reminders offer the email only. `technical/Pwa/public/sw-push.js` is imported into the generated service worker and shows the pushed messages.
 
 ## Test
 
