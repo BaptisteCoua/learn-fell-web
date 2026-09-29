@@ -1,5 +1,5 @@
 <template>
-  <section :aria-labelledby="titleId" class="account-reminders">
+  <section id="rappels" :aria-labelledby="titleId" class="account-reminders">
     <header class="account-reminders__header">
       <h2 :id="titleId" class="account-reminders__title">{{ $t('reminders') }}</h2>
       <p class="account-reminders__intro">
