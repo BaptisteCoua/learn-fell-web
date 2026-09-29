@@ -29,6 +29,10 @@ export const useReminderSettings = () => {
 
   const emailEnabled = computed(() => setting.value?.email_enabled ?? false)
   const sendTime = computed(() => setting.value?.send_time ?? DEFAULT_SEND_TIME)
+  // Why the emails stopped without the account turning them off here (US4, FR-018).
+  const emailDisabledReason = computed(() =>
+    emailEnabled.value ? null : (setting.value?.email_disabled_reason ?? null),
+  )
 
   const load = async (): Promise<void> => {
     const [[settings], [deviceList]] = await nuxtApp.runWithContext(() =>
@@ -63,5 +67,14 @@ export const useReminderSettings = () => {
     await load()
   }
 
-  return { setting, devices, emailEnabled, sendTime, load, save, removeDevice }
+  return {
+    setting,
+    devices,
+    emailEnabled,
+    sendTime,
+    emailDisabledReason,
+    load,
+    save,
+    removeDevice,
+  }
 }

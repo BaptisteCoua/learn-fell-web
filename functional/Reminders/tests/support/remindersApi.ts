@@ -14,6 +14,7 @@ vi.stubGlobal('visualViewport', {
 export interface IApiCall {
   path: string
   body: Record<string, unknown>
+  query?: Record<string, unknown>
 }
 
 type Handler = (call: IApiCall) => unknown
@@ -45,11 +46,14 @@ export const aDevice = (id: number, overrides: Record<string, unknown> = {}) => 
 export const stubRemindersApi = (handlers: Record<string, Handler>) => {
   const calls: IApiCall[] = []
   const apiFetch = vi.fn(
-    async (rawPath: string, options: { body?: string | Record<string, unknown> } = {}) => {
+    async (
+      rawPath: string,
+      options: { body?: string | Record<string, unknown>; query?: Record<string, unknown> } = {},
+    ) => {
       const path = rawPath.replace(/^\//, '')
       const body =
         typeof options.body === 'string' ? JSON.parse(options.body) : (options.body ?? {})
-      const call = { path, body }
+      const call = { path, body, query: options.query }
       calls.push(call)
       const handler = handlers[path]
 

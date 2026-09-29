@@ -117,6 +117,34 @@ describe('AccountReminders', () => {
     expect(button(section, 'Activer sur cet appareil')).toBeUndefined()
   })
 
+  it('shows the emails turned off by the link of an email, and turns them back on', async () => {
+    const { section, calls } = await mountSection({
+      setting: { email_enabled: false, email_disabled_reason: 'unsubscribed' },
+    })
+
+    expect(section.text()).toContain('Vous avez coupé les rappels par email depuis un email.')
+    expect((section.find('input[name="reminder-email"]').element as HTMLInputElement).checked).toBe(
+      false,
+    )
+
+    await section.find('input[name="reminder-email"]').setValue(true)
+    await flushPromises()
+
+    expect(mutations(calls)).toEqual([
+      { mutate: [{ operation: 'update', key: 3, attributes: { email_enabled: true } }] },
+    ])
+  })
+
+  it('says when the emails were turned off after repeated refusals', async () => {
+    const { section } = await mountSection({
+      setting: { email_enabled: false, email_disabled_reason: 'bounced' },
+    })
+
+    expect(section.text()).toContain(
+      'Les rappels par email ont été désactivés : votre messagerie a refusé plusieurs envois.',
+    )
+  })
+
   it('offers no activation where this device cannot be subscribed yet', async () => {
     stubBrowserWithoutServiceWorker()
     const { section } = await mountSection()

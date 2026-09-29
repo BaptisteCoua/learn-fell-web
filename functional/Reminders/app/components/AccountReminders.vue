@@ -12,6 +12,7 @@
         :model-value="emailEnabled"
         name="reminder-email"
         :label="$t('reminder by email')"
+        :help="emailStopNotice"
         :disabled="isBusy"
         @update:model-value="changeEmail"
       />
@@ -81,6 +82,7 @@
 
 <script setup lang="ts">
 const titleId = useId()
+const { t } = useI18n()
 
 const {
   emailEnabled,
@@ -98,7 +100,19 @@ const {
   enableHere,
   turnOff,
   showInstallSteps,
+  emailDisabledReason,
 } = await useAccountReminders()
+
+const EMAIL_STOP_NOTICES = {
+  unsubscribed:
+    'you turned the reminder emails off from an email. tick the box to turn them back on.',
+  bounced:
+    'reminder emails were turned off: your mailbox refused several of them. check your email address, then turn them back on.',
+} as const
+
+const emailStopNotice = computed(() =>
+  emailDisabledReason.value ? t(EMAIL_STOP_NOTICES[emailDisabledReason.value]) : '',
+)
 </script>
 
 <style scoped lang="scss">

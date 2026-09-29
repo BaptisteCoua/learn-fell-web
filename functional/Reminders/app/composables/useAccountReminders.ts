@@ -75,6 +75,7 @@ export const useAccountReminders = async () => {
   return {
     emailEnabled: settings.emailEnabled,
     sendTime: settings.sendTime,
+    emailDisabledReason: settings.emailDisabledReason,
     devices: settings.devices,
     problem: pushDevice.problem,
     needsInstall: pushDevice.needsInstall,
