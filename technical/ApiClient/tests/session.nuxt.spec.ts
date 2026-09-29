@@ -64,3 +64,27 @@ describe('readXsrfToken', () => {
     expect(isMutatingMethod(undefined)).toBe(false)
   })
 })
+
+describe('createXsrfCookieFetcher', () => {
+  it('shares one cookie call between requests sent together', async () => {
+    const fetchCookie = vi.fn().mockResolvedValue(undefined)
+    const fetchXsrfCookie = createXsrfCookieFetcher(fetchCookie)
+
+    await Promise.all([fetchXsrfCookie(), fetchXsrfCookie()])
+
+    expect(fetchCookie).toHaveBeenCalledTimes(1)
+  })
+
+  it('calls again once the previous call has settled', async () => {
+    const fetchCookie = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('offline'))
+      .mockResolvedValue(undefined)
+    const fetchXsrfCookie = createXsrfCookieFetcher(fetchCookie)
+
+    await expect(fetchXsrfCookie()).rejects.toThrow('offline')
+    await fetchXsrfCookie()
+
+    expect(fetchCookie).toHaveBeenCalledTimes(2)
+  })
+})

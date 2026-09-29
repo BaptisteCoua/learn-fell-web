@@ -17,9 +17,13 @@ export default defineNuxtPlugin({
     const currentCookies = (): string =>
       import.meta.server ? (requestHeaders.cookie ?? '') : document.cookie
 
+    const fetchXsrfCookie = createXsrfCookieFetcher(() =>
+      $fetch('/sanctum/csrf-cookie', { baseURL: apiOrigin, credentials: 'include' }),
+    )
+
     const ensureXsrfCookie = async (): Promise<void> => {
       if (import.meta.client && readXsrfToken(currentCookies()) === null) {
-        await $fetch('/sanctum/csrf-cookie', { baseURL: apiOrigin, credentials: 'include' })
+        await fetchXsrfCookie()
       }
     }
 

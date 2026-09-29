@@ -9,5 +9,20 @@ export const readXsrfToken = (cookieHeader: string): string | null => {
   return entry ? decodeURIComponent(entry.slice(XSRF_COOKIE.length + 1)) : null
 }
 
+/**
+ * Every call to /sanctum/csrf-cookie opens a new session. Requests sent together share one call,
+ * otherwise each would read the XSRF token of a session the browser no longer holds.
+ */
+export const createXsrfCookieFetcher = (fetchCookie: () => Promise<unknown>) => {
+  let pendingFetch: Promise<unknown> | null = null
+
+  return async (): Promise<void> => {
+    pendingFetch ??= fetchCookie().finally(() => {
+      pendingFetch = null
+    })
+    await pendingFetch
+  }
+}
+
 export const isMutatingMethod = (method: string | undefined): boolean =>
   !['GET', 'HEAD', 'OPTIONS'].includes((method ?? 'GET').toUpperCase())
