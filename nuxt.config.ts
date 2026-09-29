@@ -12,7 +12,7 @@ export default defineOSDDNuxtConfig({
       'RichText',
       'Notification',
     ],
-    functional: ['Home', 'Account', 'Catalog', 'Authoring', 'Moderation', 'Learning'],
+    functional: ['Home', 'Account', 'Catalog', 'Authoring', 'Moderation', 'Learning', 'Reminders'],
   },
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
