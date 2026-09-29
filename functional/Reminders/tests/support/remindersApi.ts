@@ -70,6 +70,16 @@ export const stubRemindersApi = (handlers: Record<string, Handler>) => {
   return calls
 }
 
+export const ANDROID_CHROME =
+  'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Mobile Safari/537.36'
+export const IPHONE_SAFARI =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'
+
+// Own properties shadow the prototype's getters, and keep the rest of happy-dom's navigator.
+const setNavigator = (property: string, value: unknown): void => {
+  Object.defineProperty(window.navigator, property, { value, configurable: true })
+}
+
 interface IPushBrowser {
   permission?: NotificationPermission
   currentEndpoint?: string | null
@@ -83,7 +93,7 @@ interface IPushBrowser {
 export const stubPushBrowser = ({
   permission = 'granted',
   currentEndpoint = null,
-  userAgent = 'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/129.0 Mobile Safari/537.36',
+  userAgent = ANDROID_CHROME,
 }: IPushBrowser = {}) => {
   const unsubscribe = vi.fn(async () => true)
   const subscriptionOf = (endpoint: string) => ({
@@ -103,15 +113,9 @@ export const stubPushBrowser = ({
     Object.assign(function Notification() {}, { permission: 'default', requestPermission }),
   )
   vi.stubGlobal('PushManager', function PushManager() {})
-  vi.stubGlobal('navigator', {
-    ...navigator,
-    userAgent,
-    serviceWorker: {
-      ready: Promise.resolve({
-        pushManager: { getSubscription: async () => current, subscribe },
-      }),
-    },
-  })
+  const registration = { pushManager: { getSubscription: async () => current, subscribe } }
+  setNavigator('userAgent', userAgent)
+  setNavigator('serviceWorker', { getRegistration: async () => registration })
 
   return { requestPermission, subscribe, unsubscribe }
 }
@@ -120,8 +124,10 @@ export const stubPushBrowser = ({
  * A browser without the Push API, such as Safari on an iPhone outside the installed app.
  */
 export const stubBrowserWithoutPush = (userAgent: string) => {
-  vi.stubGlobal('navigator', { ...navigator, userAgent })
+  vi.stubGlobal('Notification', undefined)
   vi.stubGlobal('PushManager', undefined)
+  setNavigator('userAgent', userAgent)
+  setNavigator('serviceWorker', undefined)
 }
 
 export const signIn = () => {

@@ -62,6 +62,8 @@
         )
       }}
     </ConfirmDialog>
+
+    <ReminderProposalDialog />
   </section>
 </template>
 

@@ -6,6 +6,7 @@ export const useLearningPanel = async (subjectId: number) => {
   const sessionStore = useSessionStore()
   const { t } = useI18n()
   const { notify, notifyError } = useToast()
+  const reminderProposal = useReminderProposal()
 
   const learning = ref<Learning | null>(null)
   const isStopDialogOpen = ref(false)
@@ -32,6 +33,8 @@ export const useLearningPanel = async (subjectId: number) => {
       await Learning.new({ subject_id: subjectId }).save()
       await load()
       notify(t('you are learning this subject: its cards are in box 1.'))
+      // Reminders are offered once, after learning a first subject (002, FR-002).
+      await reminderProposal.offer()
     } catch {
       notifyError(t('something went wrong, please try again'))
     } finally {

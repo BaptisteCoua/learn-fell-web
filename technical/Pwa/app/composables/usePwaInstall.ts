@@ -49,5 +49,5 @@ export const usePwaInstall = () => {
     isIosOpen.value = false
   }
 
-  return { canInstall, isNativePromptOpen, isIosOpen, install, later, closeIos }
+  return { canInstall, isIos, isNativePromptOpen, isIosOpen, install, later, closeIos }
 }
