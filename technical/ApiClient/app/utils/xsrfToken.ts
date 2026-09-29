@@ -1,5 +1,10 @@
 const XSRF_COOKIE = 'XSRF-TOKEN'
 
+/**
+ * Laravel's answer when the XSRF token does not match the session, rejected before any work is done.
+ */
+export const CSRF_TOKEN_MISMATCH = 419
+
 export const readXsrfToken = (cookieHeader: string): string | null => {
   const entry = cookieHeader
     .split(';')

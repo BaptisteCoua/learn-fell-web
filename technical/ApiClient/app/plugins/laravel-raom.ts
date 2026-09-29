@@ -27,6 +27,18 @@ export default defineNuxtPlugin({
       }
     }
 
+    // A browser can keep its XSRF cookie after the API dropped the session behind it. The server
+    // cannot renew the browser's cookies, so the rest of the render calls as a guest instead.
+    let isSessionRejected = false
+
+    const recoverFromCsrfMismatch = async (): Promise<void> => {
+      if (import.meta.server) {
+        isSessionRejected = true
+      } else {
+        await fetchXsrfCookie()
+      }
+    }
+
     const apiFetch = $fetch.create({
       baseURL: apiBaseUrl,
       credentials: 'include',
@@ -34,10 +46,12 @@ export default defineNuxtPlugin({
       async onRequest({ options }) {
         if (isMutatingMethod(options.method)) {
           await ensureXsrfCookie()
+          options.retry ??= 1
+          options.retryStatusCodes = [CSRF_TOKEN_MISMATCH]
         }
 
         const headers = new Headers(options.headers)
-        const xsrfToken = readXsrfToken(currentCookies())
+        const xsrfToken = isSessionRejected ? null : readXsrfToken(currentCookies())
 
         if (xsrfToken !== null) {
           headers.set('X-XSRF-TOKEN', xsrfToken)
@@ -54,7 +68,19 @@ export default defineNuxtPlugin({
           }
         }
 
+        // A retry reuses the headers of the rejected attempt.
+        if (import.meta.server && xsrfToken === null) {
+          for (const sessionHeader of ['X-XSRF-TOKEN', 'Origin', 'Referer', 'Cookie']) {
+            headers.delete(sessionHeader)
+          }
+        }
+
         options.headers = headers
+      },
+      async onResponseError({ response }) {
+        if (response.status === CSRF_TOKEN_MISMATCH) {
+          await recoverFromCsrfMismatch()
+        }
       },
     })
 
