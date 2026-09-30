@@ -54,10 +54,21 @@ describe('ReviewSession', () => {
     const { page, calls } = await mountSession()
 
     expect(page.text()).toContain('1 / 2')
+    expect(page.find('.session-page__eyebrow').text()).toBe('Séance · 2 cartes')
     expect(page.text()).toContain('Recto 1')
     expect(calls[0]?.body).toMatchObject({
       search: { instructions: [{ name: 'due', fields: [{ name: 'subject_ids', value: [25] }] }] },
     })
+  })
+
+  it('counts a session of one card in the singular', async () => {
+    stubLearningApi({
+      'card-progress/search': () => [aCard(1)],
+      'learnings/search': () => [aLearning()],
+    })
+    const page = await mountSuspended(SessionPage, { route: '/revisions/seance?sujets=25' })
+
+    expect(page.find('.session-page__eyebrow').text()).toBe('Séance · 1 carte')
   })
 
   it('offers the answers only once the verso is shown', async () => {

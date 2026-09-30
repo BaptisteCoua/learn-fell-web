@@ -10,7 +10,10 @@
   <div v-else class="session-page">
     <header class="session-page__header">
       <span class="session-page__eyebrow">{{
-        $t('session · {count} cards', { count: cards.length })
+        $t(
+          'session · {count} cards | session · {count} card | session · {count} cards',
+          cards.length,
+        )
       }}</span>
       <span v-if="current" class="session-page__position"
         >{{ index + 1 }} / {{ cards.length }}</span

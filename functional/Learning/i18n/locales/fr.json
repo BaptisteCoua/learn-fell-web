@@ -35,7 +35,7 @@
   "select all": "Tout sélectionner",
   "select at least one subject": "Sélectionnez au moins un sujet",
   "session over": "Séance terminée",
-  "session · {count} cards": "Séance · {count} cartes",
+  "session · {count} cards | session · {count} card | session · {count} cards": "Séance · {count} carte | Séance · {count} carte | Séance · {count} cartes",
   "spread: {boxes}": "Répartition : {boxes}",
   "start learning this subject": "Apprendre ce sujet",
   "stays in box 5": "Reste en boîte 5",
