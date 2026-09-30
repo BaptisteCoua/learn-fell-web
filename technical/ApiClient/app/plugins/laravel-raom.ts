@@ -93,7 +93,7 @@ export default defineNuxtPlugin({
 
     return {
       provide: {
-        laravelRaom: { fetch: apiFetch },
+        laravelRaom: { fetch: apiFetch, ensureXsrfCookie },
       },
     }
   },
