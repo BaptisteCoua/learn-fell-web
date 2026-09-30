@@ -1,4 +1,4 @@
-import { BelongsTo, Field, Key, Model, Resource } from 'laravel-raom-nuxt/runtime'
+import { BelongsTo, Field, HasMany, Key, Model, Resource } from 'laravel-raom-nuxt/runtime'
 
 @Resource('questions', { limits: [1, 10, 25, 50, 100] })
 export class Question extends Model {
@@ -19,4 +19,5 @@ export class Question extends Model {
   position!: number
 
   subject = BelongsTo(() => Subject, 'subject')
+  images = HasMany(() => QuestionImage, 'images')
 }

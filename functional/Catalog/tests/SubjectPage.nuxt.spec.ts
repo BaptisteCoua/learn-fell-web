@@ -1,7 +1,8 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
+import CardModePage from '../app/pages/sujets/[id]/cartes.vue'
 import SubjectPage from '../app/pages/sujets/[id]/index.vue'
-import { aQuestion, aSubject, stubCatalogApi } from './support/catalogApi'
+import { aQuestion, aQuestionImage, aSubject, stubCatalogApi } from './support/catalogApi'
 
 const mountSubject = async () => {
   stubCatalogApi({
@@ -44,6 +45,79 @@ describe('SubjectPage', () => {
 
     expect(page.text()).toContain('Apprenez ce sujet')
     expect(page.text()).toContain('Connectez-vous pour signaler ce sujet')
+  })
+
+  it('asks for the images of the questions', async () => {
+    const apiFetch = stubCatalogApi({
+      subjects: () => [aSubject()],
+      questions: () => [aQuestion(401, 1)],
+    })
+
+    await mountSuspended(SubjectPage, { route: '/sujets/40' })
+
+    const questionSearch = apiFetch.mock.calls.find(([url]) => url === 'questions/search')
+    expect(JSON.parse(questionSearch?.[1]?.body ?? '{}').search.includes).toEqual([
+      { relation: 'images' },
+    ])
+  })
+
+  it('shows the images of a recto above its text, in their order', async () => {
+    stubCatalogApi({
+      subjects: () => [aSubject()],
+      questions: () => [
+        aQuestion(401, 1, {
+          images: [aQuestionImage(2, 1, 'Hibou en vol'), aQuestionImage(1, 0, 'Hibou de face')],
+        }),
+      ],
+    })
+
+    const page = await mountSuspended(SubjectPage, { route: '/sujets/40' })
+    const recto = page.find('.question-item__recto')
+
+    expect(recto.findAll('img').map((image) => image.attributes('alt'))).toEqual([
+      'Hibou de face',
+      'Hibou en vol',
+    ])
+    expect(recto.html().indexOf('question-image-gallery')).toBeLessThan(
+      recto.html().indexOf('Question 1'),
+    )
+  })
+
+  it('shows an image-only recto without an empty text', async () => {
+    stubCatalogApi({
+      subjects: () => [aSubject()],
+      questions: () => [aQuestion(401, 1, { recto_html: '', images: [aQuestionImage(1, 0)] })],
+    })
+
+    const page = await mountSuspended(SubjectPage, { route: '/sujets/40' })
+
+    expect(page.find('.question-item__question').exists()).toBe(false)
+    expect(page.find('.question-item img').exists()).toBe(true)
+  })
+
+  it('shows a question without image as before', async () => {
+    const page = await mountSubject()
+
+    expect(page.find('.question-item img').exists()).toBe(false)
+    expect(page.find('.question-image-gallery').exists()).toBe(false)
+    expect(page.find('.question-item__question').text()).toBe('Question 1')
+  })
+
+  it('shows the images on the recto face in card mode', async () => {
+    stubCatalogApi({
+      subjects: () => [aSubject()],
+      questions: () => [aQuestion(401, 1, { images: [aQuestionImage(1, 0, 'Hibou de face')] })],
+    })
+
+    const page = await mountSuspended(CardModePage, { route: '/sujets/40/cartes' })
+    const recto = page.find('.card-mode__card')
+
+    expect(recto.find('img').attributes('alt')).toBe('Hibou de face')
+
+    const flip = page.findAll('button').find((button) => button.text() === 'Retourner la carte')
+    await flip?.trigger('click')
+
+    expect(page.find('.card-mode__card--verso img').attributes('alt')).toBe('Hibou de face')
   })
 
   it('reports a subject the viewer may not see as not found', async () => {

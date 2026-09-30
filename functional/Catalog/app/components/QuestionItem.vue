@@ -3,7 +3,12 @@
     <div class="question-item__number" aria-hidden="true">{{ number }}</div>
     <div class="question-item__body">
       <div class="question-item__recto">
-        <RichTextView :html="question.recto_html" class="question-item__question" />
+        <QuestionImageGallery :images="question.images ?? []" class="question-item__images" />
+        <RichTextView
+          v-if="question.recto_html"
+          :html="question.recto_html"
+          class="question-item__question"
+        />
         <v-btn
           color="primary"
           :aria-expanded="isRevealed"
@@ -66,6 +71,10 @@ const number = computed(() => String(props.index + 1).padStart(2, '0'))
     align-items: flex-start;
     justify-content: space-between;
     gap: 1rem 1.5rem;
+  }
+
+  &__images {
+    flex: 1 1 100%;
   }
 
   &__question {

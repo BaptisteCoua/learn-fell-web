@@ -6,6 +6,7 @@ export const useCardMode = async (subjectId: number) => {
   const deck = useCardDeck(questions)
 
   const progressStyle = computed(() => ({ width: `${deck.progress.value}%` }))
+  const currentImages = computed(() => Array.from(deck.current.value?.images ?? []))
 
-  return { subject, progressStyle, ...deck }
+  return { subject, progressStyle, currentImages, ...deck }
 }
