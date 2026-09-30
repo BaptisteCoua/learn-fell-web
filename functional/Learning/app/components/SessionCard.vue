@@ -6,7 +6,12 @@
     </div>
     <section :aria-label="$t('recto')" class="session-card__face">
       <span class="session-card__label">{{ $t('recto') }}</span>
-      <RichTextView :html="card.question.recto_html" class="session-card__recto" />
+      <QuestionImageGallery :images="card.question.images ?? []" eager />
+      <RichTextView
+        v-if="card.question.recto_html"
+        :html="card.question.recto_html"
+        class="session-card__recto"
+      />
       <span v-if="!isRevealed" class="session-card__hint">{{
         $t('think about the answer, then flip the card.')
       }}</span>

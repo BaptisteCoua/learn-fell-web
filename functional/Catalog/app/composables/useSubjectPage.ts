@@ -1,5 +1,5 @@
 /**
- * A subject and all its questions in order. A subject the viewer may not see is reported as
+ * A subject and all its questions in order, with the images of their recto. A subject the viewer may not see is reported as
  * not found, so its existence is never revealed (FR-023).
  */
 export const useSubjectPage = async (subjectId: number) => {
@@ -10,6 +10,7 @@ export const useSubjectPage = async (subjectId: number) => {
       Question.query()
         .where('subject_id', subjectId)
         .orderBy('position', 'asc')
+        .include('images')
         .limit(100)
         .getPage(page),
     )

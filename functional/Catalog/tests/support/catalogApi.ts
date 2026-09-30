@@ -31,12 +31,28 @@ export const aSubject = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 })
 
-export const aQuestion = (id: number, position: number) => ({
+export const aQuestionImage = (id: number, position: number, alt = `Image ${id}`) => ({
+  id,
+  question_id: 401,
+  alt,
+  position,
+  width: 1600,
+  height: 1067,
+  variant_widths: [480, 960, 1600],
+})
+
+export const aQuestion = (
+  id: number,
+  position: number,
+  overrides: Record<string, unknown> = {},
+) => ({
   id,
   subject_id: 40,
   recto_html: `<p>Question ${position}</p>`,
   verso_html: `<p>Réponse ${position}</p>`,
   position,
+  images: [],
+  ...overrides,
 })
 
 const page = (data: unknown[]) => ({

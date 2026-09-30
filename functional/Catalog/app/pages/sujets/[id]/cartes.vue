@@ -21,12 +21,22 @@
     <main v-if="current" class="card-mode__main">
       <section v-if="!isFlipped" :aria-label="$t('recto')" class="card-mode__card">
         <span class="card-mode__face card-mode__face--recto">{{ $t('recto') }}</span>
-        <RichTextView :html="current.recto_html" class="card-mode__question" />
+        <QuestionImageGallery :images="currentImages" />
+        <RichTextView
+          v-if="current.recto_html"
+          :html="current.recto_html"
+          class="card-mode__question"
+        />
         <span>{{ $t('think, then flip the card.') }}</span>
       </section>
       <section v-else :aria-label="$t('verso')" class="card-mode__card card-mode__card--verso">
         <span class="card-mode__face card-mode__face--verso">{{ $t('verso') }}</span>
-        <RichTextView :html="current.recto_html" class="card-mode__reminder" />
+        <QuestionImageGallery :images="currentImages" />
+        <RichTextView
+          v-if="current.recto_html"
+          :html="current.recto_html"
+          class="card-mode__reminder"
+        />
         <RichTextView :html="current.verso_html" class="card-mode__answer" />
       </section>
     </main>
@@ -50,8 +60,17 @@
 
 <script setup lang="ts">
 const route = useRoute()
-const { subject, current, position, progressStyle, isFlipped, flip, next, previous } =
-  await useCardMode(Number(route.params.id))
+const {
+  subject,
+  current,
+  currentImages,
+  position,
+  progressStyle,
+  isFlipped,
+  flip,
+  next,
+  previous,
+} = await useCardMode(Number(route.params.id))
 
 useHead({ title: subject.title })
 </script>

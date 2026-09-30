@@ -2,14 +2,21 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
 import SessionPage from '../app/pages/revisions/seance.vue'
-import { aCard, aLearning, signIn, stubLearningApi, type IApiCall } from './support/learningApi'
+import {
+  aCard,
+  aLearning,
+  aQuestionImage,
+  signIn,
+  stubLearningApi,
+  type IApiCall,
+} from './support/learningApi'
 
 type Page = Awaited<ReturnType<typeof mountSuspended>>
 
 const button = (page: Page, text: RegExp) =>
   page.findAll('button').find((item) => text.test(item.text()))
 
-const mountSession = async () => {
+const mountSession = async (firstCardImages: unknown[] = []) => {
   // After an answer the card is read again: box 2 when known, box 1 when missed.
   let lastKnown = true
   const calls = stubLearningApi({
@@ -25,7 +32,7 @@ const mountSession = async () => {
               next_review_on: lastKnown ? '2026-09-27' : '2026-09-26',
             },
           ]
-        : [aCard(1), aCard(2)]
+        : [aCard(1, 1, firstCardImages), aCard(2)]
     },
     'card-progress/actions/answer': (call: IApiCall) => {
       lastKnown = (call.body.fields as { name: string; value: unknown }[])[1]?.value === true
@@ -94,6 +101,62 @@ describe('ReviewSession', () => {
     await flushPromises()
 
     expect(calls.filter((call) => call.path === 'card-progress/actions/answer')).toHaveLength(1)
+    expect(page.text()).toContain('Boîte 1 → boîte 2')
+  })
+
+  it('asks for the images of the questions', async () => {
+    const { calls } = await mountSession()
+
+    expect(calls[0]?.body).toMatchObject({
+      search: {
+        includes: [
+          { relation: 'question' },
+          { relation: 'question.images' },
+          { relation: 'subject' },
+        ],
+      },
+    })
+  })
+
+  it('shows the images of the recto at once, before the verso', async () => {
+    const { page } = await mountSession([
+      aQuestionImage(2, 1, 'Hibou en vol'),
+      aQuestionImage(1, 0, 'Hibou de face'),
+    ])
+    const images = page.findAll('.session-card__face img')
+
+    expect(page.text()).not.toContain('Verso 1')
+    expect(images.map((image) => image.attributes('alt'))).toEqual([
+      'Hibou de face',
+      'Hibou en vol',
+    ])
+    expect(images[0]?.attributes('loading')).toBe('eager')
+    expect(button(page, /Afficher la réponse/)).toBeDefined()
+  })
+
+  it('keeps the answers within reach below the images', async () => {
+    const { page } = await mountSession([aQuestionImage(1, 0), aQuestionImage(2, 1)])
+
+    await button(page, /Afficher la réponse/)?.trigger('click')
+
+    expect(button(page, /^Je savais/)?.attributes('disabled')).toBeUndefined()
+    expect(button(page, /Je ne savais pas/)?.attributes('disabled')).toBeUndefined()
+  })
+
+  it('shows the description of an image that does not load, and the session goes on', async () => {
+    const { page, calls } = await mountSession([aQuestionImage(1, 0, 'Hibou de face')])
+
+    await page.find('.session-card__face img').trigger('error')
+
+    expect(page.find('.question-image-gallery__fallback').text()).toBe(
+      'Image non chargée : Hibou de face',
+    )
+
+    await button(page, /Afficher la réponse/)?.trigger('click')
+    await button(page, /^Je savais/)?.trigger('click')
+    await flushPromises()
+
+    expect(calls.some((call) => call.path === 'card-progress/actions/answer')).toBe(true)
     expect(page.text()).toContain('Boîte 1 → boîte 2')
   })
 

@@ -42,7 +42,12 @@ export const useSubjectEditor = async (subjectId: number) => {
 
   const reloadQuestions = async (): Promise<void> => {
     const [data] = await nuxtApp.runWithContext(() =>
-      Question.query().where('subject_id', subjectId).orderBy('position', 'asc').limit(100).get(),
+      Question.query()
+        .where('subject_id', subjectId)
+        .orderBy('position', 'asc')
+        .include('images')
+        .limit(100)
+        .get(),
     )
     questions.value = Array.from(data)
   }
