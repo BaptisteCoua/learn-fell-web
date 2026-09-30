@@ -40,7 +40,17 @@ export const aLearning = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 })
 
-export const aCard = (id: number, box = 1) => ({
+export const aQuestionImage = (id: number, position: number, alt = `Image ${id}`) => ({
+  id,
+  question_id: 101,
+  alt,
+  position,
+  width: 1600,
+  height: 1067,
+  variant_widths: [480, 960, 1600],
+})
+
+export const aCard = (id: number, box = 1, images: unknown[] = []) => ({
   id,
   subject_id: 25,
   question_id: 100 + id,
@@ -54,6 +64,7 @@ export const aCard = (id: number, box = 1) => ({
     recto_html: `<p>Recto ${id}</p>`,
     verso_html: `<p>Verso ${id}</p>`,
     position: id,
+    images,
   },
 })
 

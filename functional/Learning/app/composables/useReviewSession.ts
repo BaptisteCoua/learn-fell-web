@@ -128,6 +128,7 @@ export const useReviewSession = async () => {
         // raom types instruction values as strings; lomkit takes the list as is.
         .instruction('due', [{ name: 'subject_ids', value: subjectIds as unknown as string }])
         .include('question')
+        .include('question.images')
         .include('subject')
         .limit(100)
         .get(),
