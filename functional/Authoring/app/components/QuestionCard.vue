@@ -4,7 +4,8 @@
     <div class="question-card__faces">
       <div class="question-card__face">
         <span class="question-card__label">{{ $t('recto') }}</span>
-        <RichTextView :html="question.recto_html" />
+        <QuestionImageGallery :images="question.images ?? []" />
+        <RichTextView v-if="question.recto_html" :html="question.recto_html" />
       </div>
       <div class="question-card__face question-card__face--verso">
         <span class="question-card__label">{{ $t('verso') }}</span>
