@@ -5,7 +5,7 @@
     <main class="default-layout__main">
       <slot />
     </main>
-    <div class="d-md-none"><AppTabBar /></div>
+    <div class="d-md-none"><AppMobileMenu /></div>
   </div>
 </template>
 

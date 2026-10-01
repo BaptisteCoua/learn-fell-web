@@ -3,8 +3,15 @@ export interface INavigationLink {
   to: string
 }
 
+export type MenuTileTone = 'yellow' | 'blue' | 'white' | 'ink'
+
+export interface IMenuLink extends INavigationLink {
+  icon: string
+  tone: MenuTileTone
+}
+
 /**
- * The header and tab bar entries for the current session: visitor, member or admin.
+ * The header and mobile menu entries for the current session: visitor, member or admin.
  * Admin entries depend on permissions, never on a role name.
  */
 export const useAppNavigation = () => {
@@ -32,12 +39,22 @@ export const useAppNavigation = () => {
     ]
   })
 
-  const tabLinks = computed<INavigationLink[]>(() => [
-    { label: t('catalogue'), to: '/categories' },
-    { label: t('review'), to: '/revisions' },
-    { label: t('subjects'), to: '/mes-sujets' },
-    { label: t('create'), to: '/sujets/nouveau' },
-    { label: t('account'), to: sessionStore.isSignedIn ? '/compte' : '/connexion' },
+  // The account stays in the mobile header, behind the avatar.
+  const menuLinks = computed<IMenuLink[]>(() => [
+    { label: t('review'), to: '/revisions', icon: 'mdi-cards-outline', tone: 'yellow' },
+    { label: t('catalogue'), to: '/categories', icon: 'mdi-bookshelf', tone: 'blue' },
+    { label: t('subjects'), to: '/mes-sujets', icon: 'mdi-folder-outline', tone: 'white' },
+    { label: t('create'), to: '/sujets/nouveau', icon: 'mdi-plus', tone: 'ink' },
+    ...(isModerator.value
+      ? [
+          {
+            label: t('moderation'),
+            to: '/admin/moderation',
+            icon: 'mdi-shield-check-outline',
+            tone: 'white' as const,
+          },
+        ]
+      : []),
   ])
 
   // An anchor on the landing page (`/#methode`) is a place in a page, never the current page.
@@ -46,7 +63,7 @@ export const useAppNavigation = () => {
 
   return {
     headerLinks,
-    tabLinks,
+    menuLinks,
     isActive,
     isSignedIn: computed(() => sessionStore.isSignedIn),
     initials: computed(() => sessionStore.initials),
