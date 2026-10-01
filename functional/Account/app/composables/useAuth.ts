@@ -33,6 +33,15 @@ export interface IVerificationLink {
 export const useAuth = () => {
   const apiFetch = useApiFetch()
   const sessionStore = useSessionStore()
+  const offlineReview = useOfflineReview()
+
+  // Once signed in: another account's review data is erased, the same account's answers
+  // leave (006, FR-004).
+  const syncReviewData = (): void => {
+    if (sessionStore.user) {
+      void offlineReview.syncForUser(sessionStore.user.id)
+    }
+  }
 
   // Reviews fall due at midnight in the learner's own time zone.
   const deviceTimezone = (): string => Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -51,6 +60,7 @@ export const useAuth = () => {
       body: { email, password, timezone: deviceTimezone() },
     })
     await sessionStore.fetchUser()
+    syncReviewData()
 
     return response?.deletion_cancelled === true
   }
@@ -66,6 +76,7 @@ export const useAuth = () => {
       query: { expires: link.expires, nonce: link.nonce, signature: link.signature },
     })
     await sessionStore.fetchUser()
+    syncReviewData()
   }
 
   const resendVerification = async (email: string): Promise<void> => {
@@ -93,6 +104,8 @@ export const useAuth = () => {
       body: { password, keep_published_subjects: keepPublishedSubjects },
     })
     sessionStore.clear()
+    // Closing the sessions logs this device out: its review data leaves with the account.
+    await offlineReview.discard()
 
     return eraseOn
   }

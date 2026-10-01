@@ -46,6 +46,8 @@
   "log in before then to change your mind": "Reconnectez-vous d'ici là pour changer d'avis",
   "log in to it": "connectez-vous",
   "log out": "Se déconnecter",
+  "log out anyway": "Me déconnecter quand même",
+  "log out?": "Se déconnecter ?",
   "moderation history": "Historique de modération",
   "moderation queue": "File de modération",
   "never shown publicly.": "Jamais affichée publiquement.",
@@ -82,6 +84,7 @@
   "type the email address of your account. we will send you a link to choose a new password.": "Saisissez l'adresse email de votre compte. Nous vous enverrons un lien pour choisir un nouveau mot de passe.",
   "type your password to confirm.": "Saisissez votre mot de passe pour confirmer.",
   "usable only once": "Utilisable une seule fois",
+  "wait for the network": "Attendre le réseau",
   "we sent you an email that confirms your request.": "Nous vous avons envoyé un email qui confirme votre demande.",
   "we will send you a link to confirm your email address. already signed up?": "Nous vous enverrons un lien pour confirmer votre adresse email. Déjà inscrit ?",
   "welcome back.": "Bon\nretour.",
@@ -105,5 +108,6 @@
   "your progress and your review history": "Votre progression et votre historique de révision",
   "your review reminder settings and devices": "Vos réglages de rappels et vos appareils",
   "your turn to write.": "À vous\nd'écrire.",
+  "{count} answers have not been sent yet. they will be lost if you log out now. | {count} answer has not been sent yet. it will be lost if you log out now. | {count} answers have not been sent yet. they will be lost if you log out now.": "{count} réponse n'est pas encore envoyée. Elle sera perdue si vous vous déconnectez maintenant. | {count} réponse n'est pas encore envoyée. Elle sera perdue si vous vous déconnectez maintenant. | {count} réponses ne sont pas encore envoyées. Elles seront perdues si vous vous déconnectez maintenant.",
   "{subjects} published subjects, learned by {learners} people.": "{subjects} sujets publiés, appris par {learners} personnes."
 }

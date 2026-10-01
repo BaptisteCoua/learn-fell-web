@@ -33,11 +33,38 @@
     >
       <v-icon icon="mdi-logout" />{{ $t('log out') }}
     </button>
+
+    <ConfirmDialog
+      :open="isLogoutDialogOpen"
+      :title="$t('log out?')"
+      :cancel-label="$t('wait for the network')"
+      :confirm-label="$t('log out anyway')"
+      danger
+      @close="closeLogoutDialog"
+      @confirm="logOutAnyway"
+    >
+      {{
+        $t(
+          '{count} answers have not been sent yet. they will be lost if you log out now. | {count} answer has not been sent yet. it will be lost if you log out now. | {count} answers have not been sent yet. they will be lost if you log out now.',
+          pendingCount,
+        )
+      }}
+    </ConfirmDialog>
   </div>
 </template>
 
 <script setup lang="ts">
-const { user, initials, links, adminLinks, logOut } = useAccountMenu()
+const {
+  user,
+  initials,
+  links,
+  adminLinks,
+  pendingCount,
+  isLogoutDialogOpen,
+  logOut,
+  logOutAnyway,
+  closeLogoutDialog,
+} = useAccountMenu()
 const { canInstall, install } = usePwaInstall()
 </script>
 
