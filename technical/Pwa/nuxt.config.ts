@@ -44,11 +44,24 @@ export default defineNuxtConfig({
       // The review reminders of 002: shown on a push, opened on a click.
       importScripts: ['sw-push.js'],
       // Pages are rendered by the server: no app shell for every navigation, only a fallback
-      // when the network is gone (FR-039). Subjects are not readable offline in 001.
+      // when the network is gone (FR-039). Subjects are not readable offline in 001; only
+      // the review pages are, from their own shell (006).
       navigateFallback: null,
-      // The prerendered offline page is precached as `hors-ligne`.
-      globPatterns: ['**/*.{js,css,png,svg,ico,woff2}', 'hors-ligne/index.html'],
+      // The prerendered offline page and review shell are precached as `hors-ligne` and
+      // `revisions`.
+      globPatterns: [
+        '**/*.{js,css,png,svg,ico,woff2}',
+        'hors-ligne/index.html',
+        'revisions/index.html',
+      ],
       runtimeCaching: [
+        {
+          // « Mes révisions » and the session, rendered on the device from the shell.
+          urlPattern: ({ request, url }) =>
+            request.mode === 'navigate' && url.pathname.startsWith('/revisions'),
+          handler: 'NetworkOnly',
+          options: { precacheFallback: { fallbackURL: '/revisions' } },
+        },
         {
           urlPattern: ({ request }) => request.mode === 'navigate',
           handler: 'NetworkOnly',

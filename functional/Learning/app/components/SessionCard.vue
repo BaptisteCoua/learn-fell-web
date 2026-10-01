@@ -6,7 +6,8 @@
     </div>
     <section :aria-label="$t('recto')" class="session-card__face">
       <span class="session-card__label">{{ $t('recto') }}</span>
-      <QuestionImageGallery :images="card.question.images ?? []" eager />
+      <OfflineImageNotice v-if="fromDevice" :images="deviceImages" />
+      <QuestionImageGallery v-else :images="card.question.images ?? []" eager />
       <RichTextView
         v-if="card.question.recto_html"
         :html="card.question.recto_html"
@@ -68,10 +69,12 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { IAnswerResult } from '../composables/useReviewSession'
+import type { IAnswerResult, IReviewCard } from '../composables/useReviewSession'
 
 const props = defineProps({
-  card: { type: Object as PropType<CardProgress>, required: true },
+  card: { type: Object as PropType<IReviewCard>, required: true },
+  // A card kept on the device: its images are not, only their description (FR-002).
+  fromDevice: { type: Boolean, default: false },
   isRevealed: { type: Boolean, required: true },
   isAnswering: { type: Boolean, default: false },
   saveFailed: { type: Boolean, default: false },
@@ -83,6 +86,12 @@ const emit = defineEmits<{ reveal: []; answer: [boolean]; next: [] }>()
 const { t } = useI18n()
 const { relativeDay } = useRelativeDay()
 
+const deviceImages = computed(() =>
+  Array.from(props.card.question.images ?? []).map((image) => ({
+    alt: image.alt,
+    position: image.position,
+  })),
+)
 const boxText = computed(() => t('box {box}', { box: props.card.box }))
 const moveText = computed(() => {
   if (!props.result) {

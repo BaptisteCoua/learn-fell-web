@@ -18,5 +18,6 @@
   "update to get the latest improvements.": "Mettez à jour pour profiter des dernières améliorations.",
   "you are offline": "Vous êtes hors ligne",
   "you are online again.": "Vous êtes de nouveau en ligne.",
-  "you can read the page shown. saving, publishing and reporting will resume when the connection is back.": "Vous pouvez lire la page affichée. L'enregistrement, la publication et le signalement reprendront au retour de la connexion."
+  "you can read the page shown and review your cards. saving, publishing and reporting will resume when the connection is back, and your answers will be sent.": "Vous pouvez lire la page affichée et réviser vos cartes. L'enregistrement, la publication et le signalement reprendront au retour de la connexion, et vos réponses partiront.",
+  "your reviews stay available offline once cinq has been opened online on this device.": "Vos révisions restent disponibles hors ligne, une fois CINQ ouvert en ligne sur cet appareil."
 }

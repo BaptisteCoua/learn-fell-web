@@ -5,7 +5,7 @@
       <strong>{{ $t('offline.') }}</strong>
       {{
         $t(
-          'you can read the page shown. saving, publishing and reporting will resume when the connection is back.',
+          'you can read the page shown and review your cards. saving, publishing and reporting will resume when the connection is back, and your answers will be sent.',
         )
       }}
     </span>

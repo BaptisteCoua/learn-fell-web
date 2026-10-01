@@ -7,7 +7,15 @@
     <p class="offline-page__text">
       {{ $t('cinq needs a connection to show the subjects. check your network, then try again.') }}
     </p>
-    <v-btn color="primary" size="x-large" @click="retry">{{ $t('try again') }}</v-btn>
+    <p class="offline-page__text">
+      {{
+        $t('your reviews stay available offline once cinq has been opened online on this device.')
+      }}
+    </p>
+    <div class="offline-page__actions">
+      <v-btn color="primary" size="x-large" @click="retry">{{ $t('try again') }}</v-btn>
+      <v-btn to="/revisions" variant="outlined" size="x-large">{{ $t('my reviews') }}</v-btn>
+    </div>
   </section>
 </template>
 
@@ -50,6 +58,12 @@ useHead({ title: () => t('you are offline') })
     margin: 0;
     font-size: 1.0625rem;
     line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 }
 </style>

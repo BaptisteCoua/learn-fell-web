@@ -27,7 +27,14 @@
     </section>
 
     <section class="revisions-page__content">
-      <div v-if="learnings.length === 0" class="revisions-page__empty">
+      <OfflineStatus :offline="isOffline" />
+      <PendingAnswers />
+
+      <div v-if="learnings.length === 0 && isOffline" class="revisions-page__empty">
+        <h2 class="revisions-page__empty-title">{{ $t('nothing to review offline') }}</h2>
+      </div>
+
+      <div v-else-if="learnings.length === 0" class="revisions-page__empty">
         <h2 class="revisions-page__empty-title">{{ $t('you are not learning any subject') }}</h2>
         <p>
           {{
@@ -71,6 +78,7 @@
           :key="learning.id"
           :learning
           :selected="isSelected(learning)"
+          :can-stop="!isOffline"
           @toggle="toggle"
           @review="(target) => startSession([target.subject_id])"
           @stop="askToStop"
@@ -105,12 +113,13 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', availableOffline: true })
 
 const { t } = useI18n()
 const { relativeDay } = useRelativeDay()
 const {
   learnings,
+  isOffline,
   allDueCount,
   selectedLearnings,
   selectedDueCount,

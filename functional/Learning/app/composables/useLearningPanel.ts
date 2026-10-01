@@ -7,6 +7,7 @@ export const useLearningPanel = async (subjectId: number) => {
   const { t } = useI18n()
   const { notify, notifyError } = useToast()
   const reminderProposal = useReminderProposal()
+  const offlineReview = useOfflineReview()
 
   const learning = ref<Learning | null>(null)
   const isStopDialogOpen = ref(false)
@@ -32,6 +33,7 @@ export const useLearningPanel = async (subjectId: number) => {
     try {
       await Learning.new({ subject_id: subjectId }).save()
       await load()
+      void offlineReview.refreshPack()
       notify(t('you are learning this subject: its cards are in box 1.'))
       // Reminders are offered once, after learning a first subject (002, FR-002).
       await reminderProposal.offer()
@@ -52,6 +54,7 @@ export const useLearningPanel = async (subjectId: number) => {
     try {
       await learning.value.delete()
       learning.value = null
+      void offlineReview.refreshPack()
       notify(t('you no longer learn this subject. its progress is deleted.'))
     } catch {
       notifyError(t('something went wrong, please try again'))

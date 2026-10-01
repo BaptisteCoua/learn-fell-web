@@ -39,19 +39,24 @@
       >
         {{ $t('review this subject') }}
       </v-btn>
-      <v-btn variant="outlined" @click="emit('stop', learning)">{{ $t('stop learning') }}</v-btn>
+      <v-btn v-if="canStop" variant="outlined" @click="emit('stop', learning)">{{
+        $t('stop learning')
+      }}</v-btn>
     </div>
   </article>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
+import type { IRevision } from '../composables/useRevisions'
 
 defineProps({
-  learning: { type: Object as PropType<Learning>, required: true },
+  learning: { type: Object as PropType<IRevision>, required: true },
   selected: { type: Boolean, required: true },
+  // Stopping is saved by the API, so it waits for the network (FR-020).
+  canStop: { type: Boolean, default: true },
 })
-const emit = defineEmits<{ toggle: [Learning]; review: [Learning]; stop: [Learning] }>()
+const emit = defineEmits<{ toggle: [IRevision]; review: [IRevision]; stop: [IRevision] }>()
 
 const checkboxId = useId()
 const { relativeDay } = useRelativeDay()

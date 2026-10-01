@@ -1,25 +1,33 @@
-export interface IAnswerResult {
-  known: boolean
-  fromBox: number
-  toBox: number
-  nextReviewOn: string
-}
+import { dueCardsOf, revisionsOf } from '../offline/pack'
+import type { IAnswerResult } from '../offline/offlineReview'
+import type { IOfflineCard, IOfflineLearning } from '../offline/types'
+import type { IBoxCounts } from '../utils/leitner'
+
+export type { IAnswerResult }
+
+export type IReviewCard = CardProgress | IOfflineCard
+
+type ISummaryLearning = Pick<Learning, 'next_review_on'> & IBoxCounts
 
 /**
  * A review session over the due cards of the chosen subjects (`?sujets=1,2`). The answers
- * are offered only once the verso is shown and count once each; every answer is saved as it
- * is given, so leaving keeps them (FR-045 to FR-049).
+ * are offered only once the verso is shown and count once each. Each answer is worked out and
+ * kept on the device as it is given, then sent: leaving or losing the network keeps them
+ * (FR-045 to FR-049; 006, FR-006 to FR-008). Offline, the cards come from the device.
  */
 export const useReviewSession = async () => {
   const nuxtApp = useNuxtApp()
   const route = useRoute()
+  const sessionStore = useSessionStore()
+  const offlineReview = useOfflineReview()
 
   const subjectIds = String(route.query.sujets ?? '')
     .split(',')
     .map(Number)
     .filter((subjectId) => Number.isInteger(subjectId) && subjectId > 0)
 
-  const cards = ref<CardProgress[]>([])
+  const cards = ref<IReviewCard[]>([])
+  const isFromDevice = ref(false)
   const index = ref(0)
   const isRevealed = ref(false)
   const isAnswering = ref(false)
@@ -27,7 +35,7 @@ export const useReviewSession = async () => {
   const isQuitDialogOpen = ref(false)
   const isDone = ref(false)
   const results = ref<Record<number, IAnswerResult>>({})
-  const summaryLearnings = ref<Learning[]>([])
+  const summaryLearnings = ref<ISummaryLearning[]>([])
 
   const current = computed(() => cards.value[index.value])
   const currentResult = computed(() =>
@@ -59,6 +67,8 @@ export const useReviewSession = async () => {
         .sort()[0] ?? null,
   )
 
+  const isReachable = (): boolean => !sessionStore.isUnreachable && navigator.onLine
+
   const reveal = (): void => {
     isRevealed.value = true
   }
@@ -71,25 +81,12 @@ export const useReviewSession = async () => {
       return
     }
 
-    const fromBox = card.box
     isAnswering.value = true
     saveFailed.value = false
 
     try {
-      await CardProgress.actions('answer', [
-        { name: 'card_progress_id', value: card.id },
-        { name: 'known', value: known },
-      ])
-      const updated = await CardProgress.query().where('id', card.id).first()
-      results.value = {
-        ...results.value,
-        [card.id]: {
-          known,
-          fromBox,
-          toBox: updated?.box ?? fromBox,
-          nextReviewOn: updated?.next_review_on ?? '',
-        },
-      }
+      const result = await offlineReview.recordAnswer(card, known)
+      results.value = { ...results.value, [card.id]: result }
     } catch {
       saveFailed.value = true
     } finally {
@@ -97,9 +94,38 @@ export const useReviewSession = async () => {
     }
   }
 
+  const learningsFromDevice = (): IOfflineLearning[] => {
+    const pack = offlineReview.pack.value
+
+    return pack
+      ? revisionsOf(pack, localDay(new Date(), pack.timezone)).filter((learning) =>
+          subjectIds.includes(learning.subject_id),
+        )
+      : []
+  }
+
+  const learningsFromApi = async (): Promise<ISummaryLearning[]> => {
+    await offlineReview.flush({ refreshPack: false })
+    const [data] = await nuxtApp.runWithContext(() =>
+      Learning.query().where('subject_id', 'in', subjectIds).limit(50).get(),
+    )
+
+    return Array.from(data)
+  }
+
   const finish = async (): Promise<void> => {
-    const [data] = await Learning.query().where('subject_id', 'in', subjectIds).limit(50).get()
-    summaryLearnings.value = Array.from(data)
+    summaryLearnings.value = learningsFromDevice()
+
+    if (isReachable()) {
+      try {
+        summaryLearnings.value = await learningsFromApi()
+      } catch {
+        // Unreachable: the summary keeps the boxes worked out on the device.
+      }
+
+      void offlineReview.refreshPack()
+    }
+
     isDone.value = true
   }
 
@@ -122,7 +148,13 @@ export const useReviewSession = async () => {
     isQuitDialogOpen.value = false
   }
 
-  if (subjectIds.length > 0) {
+  const loadFromDevice = (): void => {
+    const pack = offlineReview.pack.value
+    isFromDevice.value = true
+    cards.value = pack ? dueCardsOf(pack, localDay(new Date(), pack.timezone), subjectIds) : []
+  }
+
+  const loadFromApi = async (): Promise<void> => {
     const [data] = await nuxtApp.runWithContext(() =>
       CardProgress.query()
         // raom types instruction values as strings; lomkit takes the list as is.
@@ -136,8 +168,27 @@ export const useReviewSession = async () => {
     cards.value = Array.from(data)
   }
 
+  if (subjectIds.length > 0) {
+    await offlineReview.ready()
+
+    if (isReachable()) {
+      try {
+        await loadFromApi()
+      } catch (error) {
+        if (!isNetworkError(error)) {
+          throw error
+        }
+
+        loadFromDevice()
+      }
+    } else {
+      loadFromDevice()
+    }
+  }
+
   return {
     cards,
+    isFromDevice,
     current,
     currentResult,
     index,

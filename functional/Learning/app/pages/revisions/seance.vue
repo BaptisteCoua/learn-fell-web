@@ -31,9 +31,12 @@
     </div>
 
     <main class="session-page__main">
+      <OfflineStatus :offline="isFromDevice" class="session-page__status" />
+      <PendingAnswers class="session-page__status" />
       <SessionCard
         v-if="current"
         :card="current"
+        :from-device="isFromDevice"
         :is-revealed="isRevealed"
         :is-answering="isAnswering"
         :save-failed="saveFailed"
@@ -72,11 +75,12 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', availableOffline: true })
 
 const { t } = useI18n()
 const {
   cards,
+  isFromDevice,
   current,
   currentResult,
   index,
@@ -146,6 +150,10 @@ useHead({ title: () => t('review session') })
 
   &__main {
     padding: 1.5rem clamp(1rem, 4vw, 2rem) 3rem;
+  }
+
+  &__status:not(:empty) {
+    margin-bottom: 1rem;
   }
 
   &__empty {

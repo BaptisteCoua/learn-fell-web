@@ -1,6 +1,5 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { flushPromises } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import SessionPage from '../app/pages/revisions/seance.vue'
 import {
   aCard,
@@ -15,6 +14,15 @@ type Page = Awaited<ReturnType<typeof mountSuspended>>
 
 const button = (page: Page, text: RegExp) =>
   page.findAll('button').find((item) => text.test(item.text()))
+
+// Answers are kept on the device first, which settles on later ticks.
+const shown = (page: Page, selector: string) =>
+  vi.waitFor(() => expect(page.find(selector).exists()).toBe(true))
+
+const sent = (calls: IApiCall[]) =>
+  vi.waitFor(() =>
+    expect(calls.some((call) => call.path === 'card-progress/actions/answer')).toBe(true),
+  )
 
 const mountSession = async (firstCardImages: unknown[] = []) => {
   // After an answer the card is read again: box 2 when known, box 1 when missed.
@@ -98,10 +106,30 @@ describe('ReviewSession', () => {
     const known = button(page, /^Je savais/)
     await known?.trigger('click')
     await known?.trigger('click')
-    await flushPromises()
+    await shown(page, '.session-card__result')
+    await sent(calls)
 
     expect(calls.filter((call) => call.path === 'card-progress/actions/answer')).toHaveLength(1)
     expect(page.text()).toContain('Boîte 1 → boîte 2')
+  })
+
+  it('sends each answer with its id, the time it was given and the due date it answers', async () => {
+    const { page, calls } = await mountSession()
+
+    await button(page, /Afficher la réponse/)?.trigger('click')
+    await button(page, /^Je savais/)?.trigger('click')
+    await sent(calls)
+
+    const answer = calls.find((call) => call.path === 'card-progress/actions/answer')
+    const fields = Object.fromEntries(
+      (answer?.body.fields as { name: string; value: unknown }[]).map((field) => [
+        field.name,
+        field.value,
+      ]),
+    )
+    expect(fields).toMatchObject({ card_progress_id: 1, known: true, due_on: '2026-09-25' })
+    expect(fields.answer_id).toMatch(/^[0-9a-f-]{36}$/)
+    expect(Date.parse(String(fields.answered_at))).not.toBeNaN()
   })
 
   it('asks for the images of the questions', async () => {
@@ -154,9 +182,9 @@ describe('ReviewSession', () => {
 
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /^Je savais/)?.trigger('click')
-    await flushPromises()
+    await shown(page, '.session-card__result')
+    await sent(calls)
 
-    expect(calls.some((call) => call.path === 'card-progress/actions/answer')).toBe(true)
     expect(page.text()).toContain('Boîte 1 → boîte 2')
   })
 
@@ -165,15 +193,14 @@ describe('ReviewSession', () => {
 
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /^Je savais/)?.trigger('click')
-    await flushPromises()
+    await shown(page, '.session-card__result')
     await button(page, /Carte suivante/)?.trigger('click')
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /Je ne savais pas/)?.trigger('click')
-    await flushPromises()
+    await shown(page, '.session-card__result')
     await button(page, /Voir le bilan/)?.trigger('click')
-    await flushPromises()
+    await shown(page, '.session-summary')
 
-    expect(page.find('.session-summary').exists()).toBe(true)
     expect(page.findAll('.session-summary__score strong').map((score) => score.text())).toEqual([
       '1',
       '1',
