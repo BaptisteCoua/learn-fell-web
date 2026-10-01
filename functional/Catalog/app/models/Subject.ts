@@ -8,7 +8,8 @@ import {
   Resource,
 } from 'laravel-raom-nuxt/runtime'
 
-export type SubjectStatus = 'draft' | 'published' | 'retired'
+// `withheld`: published until its author asked to delete their account with everything in it.
+export type SubjectStatus = 'draft' | 'published' | 'retired' | 'withheld'
 
 @Resource('subjects', { limits: [1, 10, 20, 50] })
 export class Subject extends Model {
@@ -29,7 +30,7 @@ export class Subject extends Model {
   category_id!: number
 
   @Field()
-  author_id!: number
+  author_id!: number | null
 
   @Field()
   published_at!: string | null

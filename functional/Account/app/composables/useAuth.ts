@@ -12,6 +12,12 @@ export interface IPasswordReset {
   password_confirmation: string
 }
 
+export interface IAccountDeletionState {
+  can_request: boolean
+  blocked_reason: 'last_admin' | null
+  erase_on: string
+}
+
 export interface IVerificationLink {
   id: string
   hash: string
@@ -71,10 +77,29 @@ export const useAuth = () => {
     await apiFetch('/reset-password', { method: 'POST', body: passwordReset })
   }
 
+  const getAccountDeletion = (): Promise<IAccountDeletionState> =>
+    apiFetch<IAccountDeletionState>('/account/deletion')
+
+  // The request closes every session of the account, this one included.
+  const requestAccountDeletion = async (
+    password: string,
+    keepPublishedSubjects: boolean | null,
+  ): Promise<string> => {
+    const { erase_on: eraseOn } = await apiFetch<{ erase_on: string }>('/account/deletion', {
+      method: 'POST',
+      body: { password, keep_published_subjects: keepPublishedSubjects },
+    })
+    sessionStore.clear()
+
+    return eraseOn
+  }
+
   return {
     register,
     login,
     logout,
+    getAccountDeletion,
+    requestAccountDeletion,
     verifyEmail,
     resendVerification,
     forgotPassword,

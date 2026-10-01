@@ -17,6 +17,7 @@ export const useAccountMenu = () => {
     { label: t('my subjects'), to: '/mes-sujets' },
     { label: t('create a subject'), to: '/sujets/nouveau' },
     { label: t('review reminders'), to: '/compte#rappels' },
+    { label: t('delete my account'), to: '/supprimer-mon-compte' },
   ])
 
   const adminLinks = computed<IAccountLink[]>(() => [
