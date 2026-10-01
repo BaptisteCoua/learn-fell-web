@@ -31,11 +31,15 @@ export const useLandingPage = async () => {
     const byId = new Map<number, ILandingAuthor>()
 
     for (const subject of latestSubjects.value) {
-      if (!byId.has(subject.author.id)) {
-        byId.set(subject.author.id, {
-          id: subject.author.id,
-          displayName: subject.author.display_name,
-          initials: initialsOf(subject.author.display_name),
+      const author = subject.author
+      const displayName = author?.display_name
+
+      // An author whose account is being deleted, or is erased, is nobody to show anymore.
+      if (author && displayName && !byId.has(author.id)) {
+        byId.set(author.id, {
+          id: author.id,
+          displayName,
+          initials: initialsOf(displayName),
           categoryName: subject.category.name,
         })
       }

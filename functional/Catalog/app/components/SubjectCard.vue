@@ -9,7 +9,7 @@
       <HighlightedText :text="subject.description" :query />
     </span>
     <span class="subject-card__footer">
-      <span>{{ $t('by {name}', { name: subject.author.display_name }) }}</span>
+      <span>{{ $t('by {name}', { name: authorName(subject.author, $t('deleted author')) }) }}</span>
       <span class="subject-card__tags">
         <span v-for="tag in subject.tags" :key="tag.id" class="subject-card__tag">
           <HighlightedText :text="tag.name" :query />

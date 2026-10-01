@@ -23,6 +23,27 @@
     </section>
 
     <form class="account-form" @submit.prevent="submit">
+      <fieldset v-if="hasPublishedSubjects" class="account-deletion__choice">
+        <legend class="account-deletion__heading">
+          {{ $t('what becomes of your published subjects?') }}
+        </legend>
+        <p class="account-deletion__summary">
+          {{
+            $t('{subjects} published subjects, learned by {learners} people.', {
+              subjects: summary.published_subjects_count,
+              learners: summary.learners_count,
+            })
+          }}
+        </p>
+        <v-radio-group
+          v-model="choice"
+          :error-messages="choiceError ? [choiceError] : []"
+          hide-details="auto"
+        >
+          <v-radio value="keep" :label="$t('keep my published subjects, without my name')" />
+          <v-radio value="erase" :label="$t('erase everything')" />
+        </v-radio-group>
+      </fieldset>
       <AccountField
         v-model="password"
         :label="$t('password')"
@@ -46,8 +67,18 @@
 definePageMeta({ middleware: 'auth' })
 
 const { t } = useI18n()
-const { state, password, passwordError, errorMessage, isSubmitting, submit } =
-  await useAccountDeletion()
+const {
+  state,
+  summary,
+  hasPublishedSubjects,
+  choice,
+  choiceError,
+  password,
+  passwordError,
+  errorMessage,
+  isSubmitting,
+  submit,
+} = await useAccountDeletion()
 
 const eraseOn = computed(() => longDate(state.value.erase_on))
 
@@ -72,6 +103,20 @@ useHead({ title: () => t('delete my account') })
     margin: 0;
     padding-left: 1.25rem;
     line-height: 1.5;
+  }
+
+  &__choice {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 1rem;
+    border: 3px solid var(--cinq-ink);
+    background: var(--cinq-white);
+  }
+
+  &__summary {
+    margin: 0;
   }
 }
 </style>

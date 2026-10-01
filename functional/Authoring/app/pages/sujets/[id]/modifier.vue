@@ -44,7 +44,7 @@
       tone="info"
       :title="
         $t('administrator mode: you are editing the subject of {name}.', {
-          name: subject.author.display_name,
+          name: authorName(subject.author, $t('deleted author')),
         })
       "
       :text="$t('your changes are visible to everyone if the subject is published.')"
@@ -238,6 +238,7 @@ const statusText = computed(
       draft: t('only you can see it'),
       published: t('everyone can see it'),
       retired: t('not visible to the public'),
+      withheld: t("withheld while its author's account is being deleted"),
     })[status.value],
 )
 

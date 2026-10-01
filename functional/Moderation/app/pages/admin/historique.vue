@@ -44,7 +44,7 @@
               {{ decisionLabels[decision.decision] }}
             </span>
             <strong class="moderation-history__subject">{{ decision.subject_title }}</strong>
-            <span>{{ decision.admin?.display_name }}</span>
+            <span>{{ authorName(decision.admin, $t('deleted account')) }}</span>
             <span class="moderation-history__reason">{{ decision.reason || '—' }}</span>
           </li>
         </ul>
@@ -54,7 +54,9 @@
         <h2 class="moderation-history__retired-title">{{ $t('retired subjects') }}</h2>
         <div v-for="subject in retiredSubjects" :key="subject.id" class="moderation-history__card">
           <strong>{{ subject.title }}</strong>
-          <span>{{ $t('by {name}', { name: subject.author?.display_name }) }}</span>
+          <span>{{
+            $t('by {name}', { name: authorName(subject.author, $t('deleted author')) })
+          }}</span>
           <span class="moderation-history__reason">{{
             $t('reason: {reason}', { reason: subject.retired_reason ?? '—' })
           }}</span>

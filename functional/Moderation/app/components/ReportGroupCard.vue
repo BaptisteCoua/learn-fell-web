@@ -34,7 +34,7 @@
       <span class="report-group__comments-title">{{ $t('comments of the reports') }}</span>
       <p v-if="commentedReports.length === 0">{{ $t('no comment.') }}</p>
       <blockquote v-for="report in commentedReports" :key="report.id" class="report-group__comment">
-        « {{ report.comment }} » — {{ report.reporter.display_name }},
+        « {{ report.comment }} » — {{ authorName(report.reporter, $t('deleted account')) }},
         {{ labelOf(report.reason).toLowerCase() }}
       </blockquote>
     </div>
@@ -50,11 +50,16 @@ const props = defineProps({
 })
 const emit = defineEmits<{ retire: [IReportGroup]; ignore: [IReportGroup] }>()
 
+const { t } = useI18n()
 const { labelOf } = useReportReasons()
 const { isOpen, toggle } = useToggle()
 
 const meta = computed(() =>
-  [props.group.subject.category?.name, props.group.subject.author?.display_name]
+  [
+    props.group.subject.category?.name,
+    authorName(props.group.subject.author, t('deleted author')),
+    props.group.subject.status === 'withheld' ? t('withheld') : null,
+  ]
     .filter(Boolean)
     .join(' · '),
 )

@@ -22,6 +22,18 @@ describe('SubjectCard', () => {
     expect(card.findAll('mark').map((mark) => mark.text())).toEqual(['Révolution', 'révolution'])
   })
 
+  it('names a deleted author « Auteur supprimé »', async () => {
+    const pending = await mountSuspended(SubjectCard, {
+      props: { subject: aSubject({ author: { id: 6, display_name: null } }) },
+    })
+    const erased = await mountSuspended(SubjectCard, {
+      props: { subject: aSubject({ author_id: null, author: null }) },
+    })
+
+    expect(pending.text()).toContain('par Auteur supprimé')
+    expect(erased.text()).toContain('par Auteur supprimé')
+  })
+
   it('cycles through the three card colours', async () => {
     const card = await mountSuspended(SubjectCard, { props: { subject: aSubject(), index: 4 } })
 

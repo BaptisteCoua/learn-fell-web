@@ -11,6 +11,21 @@ const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn() }))
 mockNuxtImport('navigateTo', () => navigateToMock)
 
 const STATE = { can_request: true, blocked_reason: null, erase_on: '2026-10-31' }
+const NO_SUBJECT = { published_subjects_count: 0, learners_count: 0 }
+const TWO_SUBJECTS = { published_subjects_count: 2, learners_count: 37 }
+
+/**
+ * The two reads of the screen, and the request: `onRequest` answers the POST.
+ */
+const stubDeletion = (
+  summary: typeof NO_SUBJECT = NO_SUBJECT,
+  onRequest: () => unknown = () => ({ erase_on: '2026-10-31' }),
+  state: Record<string, unknown> = STATE,
+) =>
+  stubAccountApi({
+    '/account/deletion': ({ method }) => (method === 'POST' ? onRequest() : state),
+    '/learning/authored-subjects-summary': () => summary,
+  })
 
 const signIn = () => {
   useSessionStore().user = {
@@ -27,6 +42,9 @@ const confirmWith = async (page: Awaited<ReturnType<typeof mountSuspended>>, pas
   await flushPromises()
 }
 
+const postedBody = (apiFetch: ReturnType<typeof stubDeletion>) =>
+  apiFetch.mock.calls.find(([, options]) => options?.method === 'POST')?.[1]?.body
+
 describe('AccountDeletionPage', () => {
   beforeEach(() => {
     navigateToMock.mockReset()
@@ -41,24 +59,19 @@ describe('AccountDeletionPage', () => {
   })
 
   it('says what is erased, what is kept, and when', async () => {
-    stubAccountApi({ '/account/deletion': () => STATE })
+    stubDeletion()
 
     const page = await mountSuspended(AccountDeletionPage, { route: '/supprimer-mon-compte' })
 
     expect(page.text()).toContain('Tout est effacé le 31 octobre 2026')
     expect(page.text()).toContain('Votre nom affiché et votre adresse email')
     expect(page.text()).toContain('Vos signalements et vos décisions de modération')
+    expect(page.text()).not.toContain('Que deviennent vos sujets publiés ?')
   })
 
   it('shows a wrong password under the field', async () => {
-    stubAccountApi({
-      '/account/deletion': ({ method }) => {
-        if (method === 'POST') {
-          throw apiFailure(422, { errors: { password: ['Mot de passe incorrect.'] } })
-        }
-
-        return STATE
-      },
+    stubDeletion(NO_SUBJECT, () => {
+      throw apiFailure(422, { errors: { password: ['Mot de passe incorrect.'] } })
     })
 
     const page = await mountSuspended(AccountDeletionPage, { route: '/supprimer-mon-compte' })
@@ -69,20 +82,42 @@ describe('AccountDeletionPage', () => {
   })
 
   it('logs out and opens the confirmation once the request is made', async () => {
-    const apiFetch = stubAccountApi({
-      '/account/deletion': ({ method }) => (method === 'POST' ? { erase_on: '2026-10-31' } : STATE),
-    })
+    const apiFetch = stubDeletion()
 
     const page = await mountSuspended(AccountDeletionPage, { route: '/supprimer-mon-compte' })
     await confirmWith(page, 'motdepasse')
 
-    const request = apiFetch.mock.calls.find(([, options]) => options?.method === 'POST')
-    expect(request?.[1]?.body).toEqual({ password: 'motdepasse', keep_published_subjects: null })
+    expect(postedBody(apiFetch)).toEqual({ password: 'motdepasse', keep_published_subjects: null })
     expect(useSessionStore().isSignedIn).toBe(false)
     expect(navigateToMock).toHaveBeenCalledWith({
       path: '/compte-supprime',
       query: { le: '2026-10-31' },
     })
+  })
+
+  it('makes an author of published subjects choose, with the numbers at hand', async () => {
+    const apiFetch = stubDeletion(TWO_SUBJECTS)
+
+    const page = await mountSuspended(AccountDeletionPage, { route: '/supprimer-mon-compte' })
+    expect(page.text()).toContain('2 sujets publiés, appris par 37 personnes.')
+
+    await confirmWith(page, 'motdepasse')
+    expect(page.text()).toContain('Choisissez ce que deviennent vos sujets publiés.')
+    expect(postedBody(apiFetch)).toBeUndefined()
+
+    await page.find('input[value="keep"]').setValue(true)
+    await confirmWith(page, 'motdepasse')
+    expect(postedBody(apiFetch)).toEqual({ password: 'motdepasse', keep_published_subjects: true })
+  })
+
+  it('sends « Tout effacer » as not keeping the subjects', async () => {
+    const apiFetch = stubDeletion(TWO_SUBJECTS)
+
+    const page = await mountSuspended(AccountDeletionPage, { route: '/supprimer-mon-compte' })
+    await page.find('input[value="erase"]').setValue(true)
+    await confirmWith(page, 'motdepasse')
+
+    expect(postedBody(apiFetch)).toEqual({ password: 'motdepasse', keep_published_subjects: false })
   })
 
   it('gives the erasure date on the confirmation page', async () => {

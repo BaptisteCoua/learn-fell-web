@@ -20,6 +20,7 @@
   "check your emails": "Vérifiez vos emails",
   "check your emails.": "Vérifiez vos emails.",
   "choose at least 8 characters": "Choisissez au moins 8 caractères",
+  "choose what becomes of your published subjects.": "Choisissez ce que deviennent vos sujets publiés.",
   "confirm the password": "Confirmer le mot de passe",
   "confirm your email address": "Confirmer votre adresse email",
   "confirming your address…": "Confirmation de votre adresse…",
@@ -30,6 +31,7 @@
   "delete my account": "Supprimer mon compte",
   "display name": "Nom affiché",
   "email address": "Adresse email",
+  "erase everything": "Tout effacer",
   "everything is erased on {date}": "Tout est effacé le {date}",
   "find your subjects and your drafts": "Retrouvez vos sujets et vos brouillons",
   "forgot your password?": "Mot de passe oublié ?",
@@ -39,6 +41,7 @@
   "if an account exists for {email}, you will receive a link valid for 60 minutes. it can be used only once.": "Si un compte existe pour {email}, vous allez recevoir un lien valable 60 minutes. Il ne peut servir qu'une fois.",
   "it happens.": "Ça\narrive.",
   "keep my account": "Garder mon compte",
+  "keep my published subjects, without my name": "Laisser mes sujets publiés, sans mon nom",
   "link expired": "Lien expiré",
   "log in before then to change your mind": "Reconnectez-vous d'ici là pour changer d'avis",
   "log out": "Se déconnecter",
@@ -84,6 +87,7 @@
   "we will send you a link to confirm your email address. already signed up?": "Nous vous enverrons un lien pour confirmer votre adresse email. Déjà inscrit ?",
   "welcome back.": "Bon\nretour.",
   "welcome, {name}. your account is active and you are logged in.": "Bienvenue, {name}. Votre compte est actif et vous êtes connecté.",
+  "what becomes of your published subjects?": "Que deviennent vos sujets publiés ?",
   "what will be erased": "Ce qui sera effacé",
   "what will be kept, without your name": "Ce qui sera conservé, sans votre nom",
   "you are logged out. see you soon on cinq.": "Vous êtes déconnecté. À bientôt sur CINQ.",
@@ -98,5 +102,6 @@
   "your other devices will be logged out": "Vos autres appareils seront déconnectés",
   "your progress and your review history": "Votre progression et votre historique de révision",
   "your review reminder settings and devices": "Vos réglages de rappels et vos appareils",
-  "your turn to write.": "À vous\nd'écrire."
+  "your turn to write.": "À vous\nd'écrire.",
+  "{subjects} published subjects, learned by {learners} people.": "{subjects} sujets publiés, appris par {learners} personnes."
 }

@@ -5,6 +5,9 @@
         <strong v-if="subject.status === 'retired'" class="subject-page__retired">
           {{ $t('retired by the moderation: {reason}', { reason: subject.retired_reason ?? '' }) }}
         </strong>
+        <strong v-else-if="subject.status === 'withheld'" class="subject-page__retired">
+          {{ $t("withheld while its author's account is being deleted") }}
+        </strong>
         <nav :aria-label="$t('breadcrumb')" class="subject-page__breadcrumb">
           <NuxtLink to="/categories">{{ $t('catalogue') }}</NuxtLink> /
           <NuxtLink :to="`/categories/${subject.category.id}`">{{
@@ -24,7 +27,11 @@
         <div class="subject-page__facts">
           <span class="subject-page__count">{{ questions.length }}</span>
           <span class="subject-page__byline">
-            {{ $t('questions · by {name}', { name: subject.author.display_name }) }}
+            {{
+              $t('questions · by {name}', {
+                name: authorName(subject.author, $t('deleted author')),
+              })
+            }}
           </span>
           <span v-if="publishedOn">{{ $t('published on {date}', { date: publishedOn }) }}</span>
         </div>

@@ -11,7 +11,13 @@ const props = defineProps({
 
 const { t } = useI18n()
 const label = computed(
-  () => ({ draft: t('draft'), published: t('published'), retired: t('retired') })[props.status],
+  () =>
+    ({
+      draft: t('draft'),
+      published: t('published'),
+      retired: t('retired'),
+      withheld: t('withheld'),
+    })[props.status],
 )
 </script>
 
@@ -34,7 +40,8 @@ const label = computed(
     background: var(--cinq-yellow);
   }
 
-  &--retired {
+  &--retired,
+  &--withheld {
     background: var(--cinq-ink);
     color: var(--cinq-cream);
   }
