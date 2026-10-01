@@ -70,6 +70,7 @@
   "type a category name.": "Saisissez un nom de catégorie.",
   "type a name.": "Saisissez un nom.",
   "type a reason: the author will see it.": "Saisissez un motif : il sera visible par l'auteur.",
+  "withheld (account deletion in progress)": "Retenu (suppression de compte en cours)",
   "you already reported this subject.": "Vous avez déjà signalé ce sujet.",
   "your report is being looked into by an administrator.": "Votre signalement est en cours d'examen par un administrateur.",
   "“{name}” holds {count} subjects, whatever their status. a category can be deleted only once it is empty.": "« {name} » contient {count} sujets, tous statuts confondus. Une catégorie ne peut être supprimée que lorsqu'elle est vide.",

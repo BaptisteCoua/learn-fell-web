@@ -39,7 +39,9 @@ describe('ReportGroupCard', () => {
       .find((button) => button.text() === 'Commentaires')
       ?.trigger('click')
 
-    expect(card.find('.report-group__meta').text()).toBe('Informatique · Auteur supprimé · Retenu')
+    expect(card.find('.report-group__meta').text()).toBe(
+      'Informatique · Auteur supprimé · Retenu (suppression de compte en cours)',
+    )
     expect(card.find('.report-group__comment').text()).toContain('— Compte supprimé,')
   })
 

@@ -58,7 +58,7 @@ const meta = computed(() =>
   [
     props.group.subject.category?.name,
     authorName(props.group.subject.author, t('deleted author')),
-    props.group.subject.status === 'withheld' ? t('withheld') : null,
+    props.group.subject.status === 'withheld' ? t('withheld (account deletion in progress)') : null,
   ]
     .filter(Boolean)
     .join(' · '),
