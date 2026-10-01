@@ -114,6 +114,28 @@ describe('useUploadRequest', () => {
     expect(csrfCookieCalls).toBe(0)
   })
 
+  it('sends the given fields next to the file', async () => {
+    document.cookie = 'XSRF-TOKEN=held; path=/'
+    const file = aFile()
+
+    ;(await mountUploader()).upload('/subjects/7/question-import', file, {
+      import_id: '6f1c2a9e-4b7d-4c1a-9f3e-2d8b5a7c0e41',
+    })
+    const request = await lastRequest()
+
+    expect(request.body?.get('file')).toBe(file)
+    expect(request.body?.get('import_id')).toBe('6f1c2a9e-4b7d-4c1a-9f3e-2d8b5a7c0e41')
+  })
+
+  it('sends the file alone when no field is given', async () => {
+    document.cookie = 'XSRF-TOKEN=held; path=/'
+
+    ;(await mountUploader()).upload('/question-images', aFile())
+    const request = await lastRequest()
+
+    expect([...(request.body?.keys() ?? [])]).toEqual(['file'])
+  })
+
   it('asks for an XSRF cookie first when the browser has none', async () => {
     ;(await mountUploader()).upload('/question-images', aFile())
     const request = await lastRequest()

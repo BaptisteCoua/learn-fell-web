@@ -26,16 +26,20 @@ const parseBody = (responseText: string): Record<string, unknown> => {
 }
 
 /**
- * Sends one file to a non-lomkit endpoint (`multipart/form-data`, field `file`) with the
- * session cookie and the XSRF header, reporting its progress and allowing to cancel it —
- * which neither raom nor `$fetch` offer (research R5).
+ * Sends one file to a non-lomkit endpoint (`multipart/form-data`, field `file`, plus the given
+ * fields) with the session cookie and the XSRF header, reporting its progress and allowing to
+ * cancel it — which neither raom nor `$fetch` offer (research R5).
  */
 export const useUploadRequest = () => {
   const nuxtApp = useNuxtApp()
   const { apiBaseUrl } = useRuntimeConfig().public
   const { toApiError } = useApiError()
 
-  const upload = <TResponse>(path: string, file: File): IUploadRequest<TResponse> => {
+  const upload = <TResponse>(
+    path: string,
+    file: File,
+    fields: Record<string, string> = {},
+  ): IUploadRequest<TResponse> => {
     const progress = ref(0)
     const request = new XMLHttpRequest()
     let isAborted = false
@@ -73,6 +77,11 @@ export const useUploadRequest = () => {
 
       const formData = new FormData()
       formData.append('file', file)
+
+      for (const [name, value] of Object.entries(fields)) {
+        formData.append(name, value)
+      }
+
       request.send(formData)
     }
 
