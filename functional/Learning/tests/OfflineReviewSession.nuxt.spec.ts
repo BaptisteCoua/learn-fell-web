@@ -110,6 +110,38 @@ describe('a session offline', () => {
   })
 })
 
+describe('an answer the device cannot keep (FR-008)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'], now: new Date('2026-10-05T08:00:00Z') })
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+    goOnline()
+  })
+
+  it('says so, without blaming the network, and the card keeps its box', async () => {
+    await seedDevice(pack)
+    openOffline()
+    const page = await mountSuspended(SessionPage, { route: '/revisions/seance?sujets=25' })
+    vi.spyOn(IDBObjectStore.prototype, 'put').mockImplementation(() => {
+      throw new DOMException('Quota exceeded', 'QuotaExceededError')
+    })
+
+    await button(page, /Afficher la réponse/)?.trigger('click')
+    await button(page, /^Je savais/)?.trigger('click')
+
+    await shown(page, '.session-card__error')
+    expect(page.find('.session-card__error').text()).toContain(
+      "Cet appareil n'a pas pu garder votre réponse.",
+    )
+    expect(page.text()).not.toContain('connexion')
+    expect(page.find('.session-card__result').exists()).toBe(false)
+    expect(page.find('.session-card__box').text()).toBe('Boîte 1')
+  })
+})
+
 describe('a session online that loses the network (edge case)', () => {
   afterEach(() => {
     goOnline()

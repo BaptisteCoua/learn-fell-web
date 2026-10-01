@@ -29,7 +29,9 @@
     <p v-if="saveFailed" role="alert" class="session-card__error">
       <strong>{{ $t('your answer could not be saved.') }}</strong>
       {{
-        $t('check your connection, then answer again. the card keeps its box until it is saved.')
+        $t(
+          'this device could not keep your answer. answer again: the card keeps its box until then.',
+        )
       }}
     </p>
 
