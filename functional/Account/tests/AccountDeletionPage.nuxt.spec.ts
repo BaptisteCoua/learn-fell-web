@@ -120,6 +120,20 @@ describe('AccountDeletionPage', () => {
     expect(postedBody(apiFetch)).toEqual({ password: 'motdepasse', keep_published_subjects: false })
   })
 
+  it('explains why the last administrator cannot leave', async () => {
+    stubDeletion(NO_SUBJECT, undefined, {
+      can_request: false,
+      blocked_reason: 'last_admin',
+      erase_on: '2026-10-31',
+    })
+
+    const page = await mountSuspended(AccountDeletionPage, { route: '/supprimer-mon-compte' })
+
+    expect(page.text()).toContain("Votre compte ne peut pas être supprimé pour l'instant.")
+    expect(page.find('input[type="password"]').exists()).toBe(false)
+    expect(page.find('button[type="submit"]').exists()).toBe(false)
+  })
+
   it('gives the erasure date on the confirmation page', async () => {
     const page = await mountSuspended(AccountDeletedPage, {
       route: '/compte-supprime?le=2026-10-31',

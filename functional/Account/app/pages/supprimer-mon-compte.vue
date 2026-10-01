@@ -22,7 +22,17 @@
       </ul>
     </section>
 
-    <form class="account-form" @submit.prevent="submit">
+    <AccountNotice
+      v-if="!state.can_request"
+      tone="info"
+      :title="$t('your account cannot be deleted for now.')"
+      :text="
+        $t(
+          'you are the last administrator of cinq: another administrator must be named before you leave.',
+        )
+      "
+    />
+    <form v-else class="account-form" @submit.prevent="submit">
       <fieldset v-if="hasPublishedSubjects" class="account-deletion__choice">
         <legend class="account-deletion__heading">
           {{ $t('what becomes of your published subjects?') }}
