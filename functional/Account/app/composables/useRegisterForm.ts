@@ -1,8 +1,7 @@
-export type EmailConflict = 'taken' | 'pending' | null
-
 /**
- * The registration form. Two different passwords are caught before sending; a taken
- * address says whether to log in or to ask for the confirmation link again.
+ * The registration form. Two different passwords are caught before sending. The answer never
+ * says whether the address already has an account (feature 005): every valid registration leads
+ * to the same « check your emails » page.
  */
 export const useRegisterForm = () => {
   const { t } = useI18n()
@@ -14,13 +13,11 @@ export const useRegisterForm = () => {
   const password = ref('')
   const passwordConfirmation = ref('')
   const fieldErrors = ref<Record<string, string>>({})
-  const emailConflict = ref<EmailConflict>(null)
   const errorMessage = ref('')
   const isSubmitting = ref(false)
 
   const submit = async (): Promise<void> => {
     fieldErrors.value = {}
-    emailConflict.value = null
     errorMessage.value = ''
 
     if (password.value !== passwordConfirmation.value) {
@@ -42,11 +39,7 @@ export const useRegisterForm = () => {
       const apiError = toApiError(error)
       fieldErrors.value = apiError.fieldErrors
 
-      if (apiError.code === 'email_taken') {
-        emailConflict.value = 'taken'
-      } else if (apiError.code === 'email_pending_verification') {
-        emailConflict.value = 'pending'
-      } else if (Object.keys(apiError.fieldErrors).length === 0) {
+      if (Object.keys(apiError.fieldErrors).length === 0) {
         errorMessage.value = apiError.message
       }
     } finally {
@@ -60,7 +53,6 @@ export const useRegisterForm = () => {
     password,
     passwordConfirmation,
     fieldErrors,
-    emailConflict,
     errorMessage,
     isSubmitting,
     submit,

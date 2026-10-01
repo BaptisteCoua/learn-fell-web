@@ -36,6 +36,23 @@ describe('ConfirmationPage', () => {
     expect(page.text()).toContain('Le précédent ne fonctionne plus.')
   })
 
+  it('stays true whether or not the address could be used', async () => {
+    stubAccountApi({})
+
+    const page = await mountSuspended(ConfirmationPage, {
+      route: '/inscription/confirmation?email=camille@exemple.fr',
+    })
+
+    expect(page.text()).toContain(
+      'Si cette adresse peut être utilisée, vous allez recevoir un lien de confirmation à camille@exemple.fr.',
+    )
+    expect(page.text()).toContain('Toujours rien ? Vous avez peut-être déjà un compte')
+    expect(page.find('a[href="/connexion"]').text()).toBe('connectez-vous')
+    expect(page.find('a[href="/mot-de-passe-oublie"]').text()).toBe(
+      'réinitialisez votre mot de passe',
+    )
+  })
+
   it('confirms the address from the email link and logs the account in', async () => {
     const apiFetch = stubAccountApi({
       '/email/verify/17/abc': () => undefined,

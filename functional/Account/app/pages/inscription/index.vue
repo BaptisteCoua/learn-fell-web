@@ -27,23 +27,7 @@
         autocomplete="email"
         :help="$t('never shown publicly.')"
         :error="fieldErrors.email"
-      >
-        <p v-if="emailConflict" role="alert" class="account-form__conflict">
-          <template v-if="emailConflict === 'taken'">
-            {{ $t('this address already has an account.') }}
-            <NuxtLink to="/connexion">{{ $t('log in') }}</NuxtLink>
-            {{ $t('or') }}
-            <NuxtLink to="/mot-de-passe-oublie">{{ $t('reset your password') }}</NuxtLink
-            >.
-          </template>
-          <template v-else>
-            {{ $t('an account waiting for confirmation already exists for this address.') }}
-            <NuxtLink :to="{ path: '/inscription/confirmation', query: { email } }">
-              {{ $t('send the confirmation link again') }} </NuxtLink
-            >.
-          </template>
-        </p>
-      </AccountField>
+      />
       <AccountField
         v-model="password"
         :label="$t('password')"
@@ -81,7 +65,6 @@ const {
   password,
   passwordConfirmation,
   fieldErrors,
-  emailConflict,
   errorMessage,
   isSubmitting,
   submit,

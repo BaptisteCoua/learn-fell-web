@@ -1,8 +1,12 @@
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import RegisterPage from '../app/pages/inscription/index.vue'
 import { apiFailure, stubAccountApi } from './support/accountApi'
+
+const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn() }))
+
+mockNuxtImport('navigateTo', () => navigateToMock)
 
 const fill = async (
   page: Awaited<ReturnType<typeof mountSuspended>>,
@@ -19,6 +23,7 @@ const fill = async (
 
 describe('RegisterPage', () => {
   beforeEach(() => {
+    navigateToMock.mockReset()
     useSessionStore().clear()
   })
 
@@ -47,34 +52,23 @@ describe('RegisterPage', () => {
     })
   })
 
-  it('invites to log in when the address has an active account', async () => {
+  it('always leads to the check-your-emails page, saying nothing of the address', async () => {
     stubAccountApi({
-      '/register': () => {
-        throw apiFailure(422, { code: 'email_taken', message: 'Un compte existe déjà.' })
-      },
+      '/register': () => ({
+        message:
+          "Si cette adresse peut être utilisée, un lien de confirmation vient d'y être envoyé.",
+      }),
     })
 
     const page = await mountSuspended(RegisterPage, { route: '/inscription' })
     await fill(page)
 
-    const conflict = page.find('.account-form__conflict')
-    expect(conflict.text()).toContain('Cette adresse a déjà un compte.')
-    expect(conflict.find('a[href="/connexion"]').exists()).toBe(true)
-  })
-
-  it('offers a new confirmation link when the account waits for confirmation', async () => {
-    stubAccountApi({
-      '/register': () => {
-        throw apiFailure(422, { code: 'email_pending_verification', message: 'En attente.' })
-      },
+    expect(navigateToMock).toHaveBeenCalledWith({
+      path: '/inscription/confirmation',
+      query: { email: 'camille@exemple.fr' },
     })
-
-    const page = await mountSuspended(RegisterPage, { route: '/inscription' })
-    await fill(page)
-
-    expect(page.find('.account-form__conflict a').attributes('href')).toBe(
-      '/inscription/confirmation?email=camille@exemple.fr',
-    )
+    expect(page.text()).not.toContain('déjà un compte')
+    expect(page.text()).not.toContain('attente de confirmation')
   })
 
   it('shows the validation message under its field', async () => {

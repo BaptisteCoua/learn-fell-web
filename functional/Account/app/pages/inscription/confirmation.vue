@@ -13,7 +13,7 @@
         <h1 class="confirmation-page__title">{{ $t('check your emails') }}</h1>
         <p class="confirmation-page__text">
           <template v-if="email">
-            {{ $t('we sent a confirmation link to') }}
+            {{ $t('if this address can be used, you will receive a confirmation link at') }}
             <strong class="confirmation-page__email">{{ email }}</strong
             >.
           </template>
@@ -22,6 +22,15 @@
         <ul class="confirmation-page__points">
           <li>{{ $t('the link is valid for 24 hours.') }}</li>
           <li>{{ $t('nothing received? look in your spam folder.') }}</li>
+          <li>
+            {{ $t('still nothing? you may already have an account:') }}
+            <NuxtLink to="/connexion" class="account-form__link">{{ $t('log in to it') }}</NuxtLink>
+            {{ $t('or') }}
+            <NuxtLink to="/mot-de-passe-oublie" class="account-form__link">{{
+              $t('reset your password')
+            }}</NuxtLink
+            >.
+          </li>
         </ul>
         <AccountNotice
           v-if="state === 'resent'"
