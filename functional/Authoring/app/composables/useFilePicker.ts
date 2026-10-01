@@ -1,8 +1,8 @@
 /**
- * A hidden file input opened by a visible button. Without `capture`, a phone offers both its
- * gallery and its camera (FR-006).
+ * A hidden file input opened by a visible button, accepting the given types. Without
+ * `capture`, a phone offers both its gallery and its camera for images (FR-006).
  */
-export const useImagePicker = (onPick: (files: File[]) => void) => {
+export const useFilePicker = (onPick: (files: File[]) => void, accept: string) => {
   const input = ref<HTMLInputElement | null>(null)
 
   const open = (): void => {
@@ -21,5 +21,5 @@ export const useImagePicker = (onPick: (files: File[]) => void) => {
     }
   }
 
-  return { input, open, onChange, accept: ACCEPTED_IMAGE_TYPES.join(',') }
+  return { input, open, onChange, accept }
 }

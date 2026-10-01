@@ -106,11 +106,11 @@ const emit = defineEmits<{
   retry: []
 }>()
 
-const { input, open, onChange, accept } = useImagePicker(([file]) => {
+const { input, open, onChange, accept } = useFilePicker(([file]) => {
   if (file) {
     emit('replace', file)
   }
-})
+}, ACCEPTED_IMAGE_TYPES.join(','))
 const { number, hasAltError, previewSrc } = useQuestionImageRow(props)
 </script>
 

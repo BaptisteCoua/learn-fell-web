@@ -69,7 +69,7 @@ const {
   setAlt,
 } = props.images
 const { isOffline } = useConnectionStatus()
-const { input, open, onChange, accept } = useImagePicker(add)
+const { input, open, onChange, accept } = useFilePicker(add, ACCEPTED_IMAGE_TYPES.join(','))
 </script>
 
 <style scoped lang="scss">
