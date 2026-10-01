@@ -77,9 +77,12 @@ export const aQuestion = (
 export const stubAuthoringApi = (handlers: Record<string, Handler>) => {
   const calls: IApiCall[] = []
   const apiFetch = vi.fn(
-    async (rawPath: string, options: { method?: string; body?: string } = {}) => {
+    async (rawPath: string, options: { method?: string; body?: string | object } = {}) => {
       const path = rawPath.replace(/^\//, '')
-      const call = { path, method: options.method ?? 'GET', body: JSON.parse(options.body ?? '{}') }
+      // Models send a JSON string, useApiFetch callers an object.
+      const body =
+        typeof options.body === 'string' ? JSON.parse(options.body) : (options.body ?? {})
+      const call = { path, method: options.method ?? 'GET', body }
       calls.push(call)
       const handler = handlers[path]
 

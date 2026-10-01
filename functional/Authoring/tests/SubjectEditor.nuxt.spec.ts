@@ -44,6 +44,11 @@ const buttonNamed = (page: Awaited<ReturnType<typeof mountEditor>>['page'], labe
     .findAll('button')
     .find((button) => button.attributes('aria-label') === label || button.text() === label)
 
+const importLink = (page: Awaited<ReturnType<typeof mountEditor>>['page']) =>
+  page
+    .findAllComponents({ name: 'VBtn' })
+    .find((button) => button.text() === 'Importer des questions')
+
 describe('SubjectEditor', () => {
   beforeEach(() => {
     signInAsAuthor()
@@ -55,6 +60,18 @@ describe('SubjectEditor', () => {
     expect(page.find('input').element.value).toBe('Git : les commandes essentielles')
     expect(page.findAll('.question-card')).toHaveLength(2)
     expect(page.text()).toContain('Questions · 2')
+  })
+
+  it('opens the import of questions', async () => {
+    const { page } = await mountEditor()
+
+    expect(importLink(page)?.props('to')).toBe('/sujets/40/importer')
+  })
+
+  it('offers no import on a subject retired by the moderation', async () => {
+    const { page } = await mountEditor(aSubject({ status: 'retired', retired_reason: 'Spam' }))
+
+    expect(importLink(page)).toBeUndefined()
   })
 
   it('moves a question and sends the new order', async () => {

@@ -3,11 +3,12 @@ import { ref, type Ref } from 'vue'
 export interface IFakeUpload {
   path: string
   file: File
+  fields: Record<string, string>
   progress: Ref<number>
   promise: Promise<unknown>
   abort: () => void
   isAborted: boolean
-  succeed: (image: Record<string, unknown>) => void
+  succeed: (data: Record<string, unknown>) => void
   fail: (error: Record<string, unknown>) => void
 }
 
@@ -25,7 +26,7 @@ export const uploadedImage = (id: number) => ({
 export const fakeUploads: IFakeUpload[] = []
 
 export const fakeUploadRequest = () => ({
-  upload: (path: string, file: File) => {
+  upload: (path: string, file: File, fields: Record<string, string> = {}) => {
     let resolve: (value: unknown) => void = () => undefined
     let reject: (error: unknown) => void = () => undefined
     const promise = new Promise((resolvePromise, rejectPromise) => {
@@ -35,6 +36,7 @@ export const fakeUploadRequest = () => ({
     const fakeUpload: IFakeUpload = {
       path,
       file,
+      fields,
       progress: ref(0),
       promise,
       isAborted: false,
@@ -42,7 +44,7 @@ export const fakeUploadRequest = () => ({
         fakeUpload.isAborted = true
         reject(new UploadAbortedError())
       },
-      succeed: (image) => resolve({ data: image }),
+      succeed: (data) => resolve({ data }),
       fail: (error) => reject(error),
     }
     fakeUploads.push(fakeUpload)

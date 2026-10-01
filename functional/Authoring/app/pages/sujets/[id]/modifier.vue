@@ -137,16 +137,19 @@
         @cancel="draft.cancel"
         @save="saveQuestion()"
       />
-      <v-btn
-        v-else-if="!isReadOnly"
-        variant="outlined"
-        size="x-large"
-        prepend-icon="mdi-plus"
-        class="subject-editor__add"
-        @click="addQuestion"
-      >
-        {{ $t('add a question') }}
-      </v-btn>
+      <div v-else-if="!isReadOnly" class="subject-editor__add">
+        <v-btn variant="outlined" size="x-large" prepend-icon="mdi-plus" @click="addQuestion">
+          {{ $t('add a question') }}
+        </v-btn>
+        <v-btn
+          :to="`/sujets/${subject.id}/importer`"
+          variant="outlined"
+          size="x-large"
+          prepend-icon="mdi-file-upload-outline"
+        >
+          {{ $t('import questions') }}
+        </v-btn>
+      </div>
     </section>
 
     <ConfirmDialog
@@ -329,7 +332,9 @@ useHead({ title: () => subject.title })
   }
 
   &__add {
-    align-self: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 }
 </style>
