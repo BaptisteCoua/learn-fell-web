@@ -41,6 +41,37 @@ describe('useSessionStore', () => {
     expect(sessionStore.can('categories.manage')).toBe(false)
   })
 
+  it('reads the time zone of the account', async () => {
+    apiFetch.mockResolvedValue({
+      id: 1,
+      display_name: 'Inès',
+      email: 'i@e.fr',
+      permissions: [],
+      timezone: 'America/Montreal',
+    })
+    const sessionStore = useSessionStore()
+
+    await sessionStore.fetchUser()
+
+    expect(sessionStore.user?.timezone).toBe('America/Montreal')
+    expect(sessionStore.isUnreachable).toBe(false)
+  })
+
+  it('tells an unreachable API from a visitor', async () => {
+    apiFetch.mockRejectedValue(new TypeError('Failed to fetch'))
+    const sessionStore = useSessionStore()
+
+    await sessionStore.fetchUser()
+
+    expect(sessionStore.user).toBeNull()
+    expect(sessionStore.isUnreachable).toBe(true)
+
+    apiFetch.mockRejectedValue(Object.assign(new Error('Unauthenticated'), { statusCode: 401 }))
+    await sessionStore.fetchUser()
+
+    expect(sessionStore.isUnreachable).toBe(false)
+  })
+
   it('forgets the account on clear', async () => {
     apiFetch.mockResolvedValue({ id: 1, display_name: 'Inès', email: 'i@e.fr', permissions: [] })
     const sessionStore = useSessionStore()
