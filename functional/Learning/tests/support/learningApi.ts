@@ -199,8 +199,15 @@ export const openOffline = () => {
   sessionStore.isUnreachable = true
 }
 
-export const goOnline = () => {
+/**
+ * The device has the network again; the app has not noticed yet.
+ */
+export const restoreNetwork = () => {
   isOnline = true
+}
+
+export const goOnline = () => {
+  restoreNetwork()
   useSessionStore().isUnreachable = false
 }
 

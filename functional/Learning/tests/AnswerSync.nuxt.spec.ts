@@ -8,6 +8,8 @@ import {
   aPack,
   aPackCard,
   goOnline,
+  openOffline,
+  restoreNetwork,
   seedDevice,
   signIn,
   stubLearningApi,
@@ -75,6 +77,34 @@ describe('the answers kept on the device', () => {
     await vi.waitFor(async () =>
       expect((await (await openOfflineStore()).readPack())?.cards[0]?.box).toBe(2),
     )
+  })
+
+  it('leave when the network comes back to an app opened offline, once the account is known (FR-010)', async () => {
+    await seedDevice(aPack(), [anAnswer(1, '2026-10-05T08:00:00.000Z')])
+    openOffline()
+    const page = await mountSuspended(RevisionsPage, { route: '/revisions' })
+    await vi.waitFor(() => expect(page.text()).toContain('1 réponse à envoyer'))
+
+    const calls = stubLearningApi({
+      user: () => ({
+        id: 7,
+        display_name: 'Inès Martin',
+        email: 'ines@exemple.fr',
+        permissions: [],
+        timezone: 'Europe/Paris',
+      }),
+      'card-progress/actions/answer': () => ({ data: { impacted: 0 } }),
+      'card-progress/search': () => [],
+      'learnings/search': () => [aLearning()],
+    })
+    restoreNetwork()
+    window.dispatchEvent(new Event('online'))
+
+    await vi.waitFor(() => expect(page.text()).not.toContain('réponse à envoyer'))
+    const paths = calls.map((call) => call.path)
+    expect(paths.indexOf('user')).toBeLessThan(paths.indexOf('card-progress/actions/answer'))
+    expect(useSessionStore().isUnreachable).toBe(false)
+    expect(answerIdsOf(calls)).toEqual([1])
   })
 
   it('shows no error for an answer the API sets aside (US3-2)', async () => {
