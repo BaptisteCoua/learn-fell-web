@@ -1,8 +1,16 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { toast } from 'vue3-toastify'
 import LoginPage from '../app/pages/connexion.vue'
 import { apiFailure, stubAccountApi } from './support/accountApi'
+
+const ACCOUNT = {
+  id: 1,
+  display_name: 'Camille Roux',
+  email: 'camille@exemple.fr',
+  permissions: [],
+}
 
 const fillAndSubmit = async (page: Awaited<ReturnType<typeof mountSuspended>>) => {
   await page.find('input[type="email"]').setValue('camille@exemple.fr')
@@ -13,7 +21,30 @@ const fillAndSubmit = async (page: Awaited<ReturnType<typeof mountSuspended>>) =
 
 describe('LoginPage', () => {
   beforeEach(() => {
+    vi.restoreAllMocks()
+    vi.spyOn(toast, 'success').mockReturnValue(0)
     useSessionStore().clear()
+  })
+
+  it('says so when logging in cancels a deletion request', async () => {
+    stubAccountApi({ '/login': () => ({ deletion_cancelled: true }), '/user': () => ACCOUNT })
+
+    const page = await mountSuspended(LoginPage, { route: '/connexion' })
+    await fillAndSubmit(page)
+
+    expect(toast.success).toHaveBeenCalledWith(
+      'Votre demande de suppression est annulée. Bon retour sur CINQ.',
+    )
+  })
+
+  it('says nothing more on an ordinary login', async () => {
+    stubAccountApi({ '/login': () => ({ two_factor: false }), '/user': () => ACCOUNT })
+
+    const page = await mountSuspended(LoginPage, { route: '/connexion' })
+    await fillAndSubmit(page)
+
+    expect(useSessionStore().isSignedIn).toBe(true)
+    expect(toast.success).not.toHaveBeenCalled()
   })
 
   it('offers Google as coming soon', async () => {

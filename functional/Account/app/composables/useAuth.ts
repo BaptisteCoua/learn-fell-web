@@ -44,12 +44,15 @@ export const useAuth = () => {
     })
   }
 
-  const login = async (email: string, password: string): Promise<void> => {
-    await apiFetch('/login', {
+  // True when this login has just cancelled the account's deletion request (feature 004).
+  const login = async (email: string, password: string): Promise<boolean> => {
+    const response = await apiFetch<{ deletion_cancelled?: boolean } | undefined>('/login', {
       method: 'POST',
       body: { email, password, timezone: deviceTimezone() },
     })
     await sessionStore.fetchUser()
+
+    return response?.deletion_cancelled === true
   }
 
   const logout = async (): Promise<void> => {

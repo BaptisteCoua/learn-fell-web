@@ -2,12 +2,15 @@ export type LoginState = 'idle' | 'error' | 'locked' | 'unverified' | 'resent'
 
 /**
  * The login form: a generic error, a locked account, an unconfirmed one (with a new link
- * on request). Once logged in, back to the page that asked for it.
+ * on request). Once logged in, back to the page that asked for it, saying so when the login
+ * cancelled a deletion request.
  */
 export const useLoginForm = () => {
   const route = useRoute()
+  const { t } = useI18n()
   const { login, resendVerification } = useAuth()
   const { toApiError } = useApiError()
+  const { notify } = useToast()
 
   const email = ref('')
   const password = ref('')
@@ -28,7 +31,10 @@ export const useLoginForm = () => {
     isSubmitting.value = true
 
     try {
-      await login(email.value, password.value)
+      if (await login(email.value, password.value)) {
+        notify(t('your deletion request is cancelled. welcome back.'))
+      }
+
       await navigateTo(redirectPath.value)
     } catch (error) {
       const apiError = toApiError(error)
