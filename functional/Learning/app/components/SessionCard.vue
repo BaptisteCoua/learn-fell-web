@@ -38,7 +38,7 @@
     <v-btn v-if="!isRevealed" color="primary" size="x-large" block @click="emit('reveal')">
       {{ $t('show the answer') }}
     </v-btn>
-    <div v-else-if="!result" class="cinq-actions">
+    <div v-else class="cinq-actions">
       <v-btn
         variant="outlined"
         size="x-large"
@@ -55,23 +55,12 @@
         >
       </v-btn>
     </div>
-    <div
-      v-else
-      role="status"
-      :class="['session-card__result', { 'session-card__result--missed': !result.known }]"
-    >
-      <strong>{{ moveText }}</strong>
-      <span>{{ whenText }}</span>
-      <v-btn color="primary" size="large" @click="emit('next')">
-        {{ isLast ? $t('see the summary') : $t('next card') }}
-      </v-btn>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { PropType } from 'vue'
-import type { IAnswerResult, IReviewCard } from '../composables/useReviewSession'
+import type { IReviewCard } from '../composables/useReviewSession'
 
 const props = defineProps({
   card: { type: Object as PropType<IReviewCard>, required: true },
@@ -80,13 +69,10 @@ const props = defineProps({
   isRevealed: { type: Boolean, required: true },
   isAnswering: { type: Boolean, default: false },
   saveFailed: { type: Boolean, default: false },
-  isLast: { type: Boolean, default: false },
-  result: { type: Object as PropType<IAnswerResult>, default: undefined },
 })
-const emit = defineEmits<{ reveal: []; answer: [boolean]; next: [] }>()
+const emit = defineEmits<{ reveal: []; answer: [boolean] }>()
 
 const { t } = useI18n()
-const { relativeDay } = useRelativeDay()
 
 const deviceImages = computed(() =>
   Array.from(props.card.question.images ?? []).map((image) => ({
@@ -95,24 +81,6 @@ const deviceImages = computed(() =>
   })),
 )
 const boxText = computed(() => t('box {box}', { box: props.card.box }))
-const moveText = computed(() => {
-  if (!props.result) {
-    return ''
-  }
-
-  if (!props.result.known) {
-    return t('back to box 1')
-  }
-
-  return props.result.fromBox === props.result.toBox
-    ? t('stays in box 5')
-    : t('box {from} → box {to}', { from: props.result.fromBox, to: props.result.toBox })
-})
-const whenText = computed(() =>
-  props.result
-    ? t('comes back: {day}', { day: relativeDay(props.result.nextReviewOn).toLowerCase() })
-    : '',
-)
 </script>
 
 <style scoped lang="scss">
@@ -197,31 +165,6 @@ const whenText = computed(() =>
     padding: 0.875rem 1rem;
     border: 4px solid var(--cinq-red);
     background: var(--cinq-white);
-  }
-
-  &__result {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 1.25rem;
-    padding: 1rem 1.25rem;
-    border: var(--cinq-border);
-    background: var(--cinq-yellow);
-    font-size: 1.0625rem;
-
-    strong {
-      font-family: var(--cinq-font-display);
-      font-size: 1.375rem;
-      font-weight: 900;
-    }
-
-    .v-btn {
-      margin-left: auto;
-    }
-
-    &--missed {
-      background: var(--cinq-white);
-    }
   }
 
   :deep(.v-btn--size-x-large) {

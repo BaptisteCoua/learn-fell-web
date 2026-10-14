@@ -19,6 +19,10 @@ const button = (page: Page, text: RegExp) =>
 const shown = (page: Page, selector: string) =>
   vi.waitFor(() => expect(page.find(selector).exists()).toBe(true))
 
+// No confirmation to give: an answer takes the session straight to the next card.
+const textShown = (page: Page, text: string) =>
+  vi.waitFor(() => expect(page.text()).toContain(text))
+
 const sent = (calls: IApiCall[]) =>
   vi.waitFor(() =>
     expect(calls.some((call) => call.path === 'card-progress/actions/answer')).toBe(true),
@@ -99,18 +103,17 @@ describe('ReviewSession', () => {
     expect(button(page, /Je ne savais pas/)).toBeDefined()
   })
 
-  it('counts a double click once and shows where the card went', async () => {
+  it('counts a double click once and goes straight to the next card', async () => {
     const { page, calls } = await mountSession()
     await button(page, /Afficher la réponse/)?.trigger('click')
 
     const known = button(page, /^Je savais/)
     await known?.trigger('click')
     await known?.trigger('click')
-    await shown(page, '.session-card__result')
+    await textShown(page, 'Recto 2')
     await sent(calls)
 
     expect(calls.filter((call) => call.path === 'card-progress/actions/answer')).toHaveLength(1)
-    expect(page.text()).toContain('Boîte 1 → boîte 2')
   })
 
   it('sends each answer with its id, the time it was given and the due date it answers', async () => {
@@ -182,10 +185,8 @@ describe('ReviewSession', () => {
 
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /^Je savais/)?.trigger('click')
-    await shown(page, '.session-card__result')
+    await textShown(page, 'Recto 2')
     await sent(calls)
-
-    expect(page.text()).toContain('Boîte 1 → boîte 2')
   })
 
   it('ends with the summary of the session', async () => {
@@ -193,12 +194,9 @@ describe('ReviewSession', () => {
 
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /^Je savais/)?.trigger('click')
-    await shown(page, '.session-card__result')
-    await button(page, /Carte suivante/)?.trigger('click')
+    await textShown(page, 'Recto 2')
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /Je ne savais pas/)?.trigger('click')
-    await shown(page, '.session-card__result')
-    await button(page, /Voir le bilan/)?.trigger('click')
     await shown(page, '.session-summary')
 
     expect(page.findAll('.session-summary__score strong').map((score) => score.text())).toEqual([

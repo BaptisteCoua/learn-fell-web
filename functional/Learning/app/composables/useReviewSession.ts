@@ -87,6 +87,8 @@ export const useReviewSession = async () => {
     try {
       const result = await offlineReview.recordAnswer(card, known)
       results.value = { ...results.value, [card.id]: result }
+      // No confirmation needed: the session goes straight on to the next card.
+      await next()
     } catch {
       saveFailed.value = true
     } finally {
@@ -190,14 +192,12 @@ export const useReviewSession = async () => {
     cards,
     isFromDevice,
     current,
-    currentResult,
     index,
     isRevealed,
     isAnswering,
     saveFailed,
     isQuitDialogOpen,
     isDone,
-    isLast,
     answeredCount,
     remainingCount,
     progressStyle,
@@ -207,7 +207,6 @@ export const useReviewSession = async () => {
     nextReviewOn,
     reveal,
     answer,
-    next,
     askToQuit,
     closeQuitDialog,
   }

@@ -1,5 +1,4 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { openOfflineStore } from '../app/offline/database'
 import SessionPage from '../app/pages/revisions/seance.vue'
@@ -26,10 +25,13 @@ const button = (page: Page, text: RegExp) =>
 const shown = (page: Page, selector: string) =>
   vi.waitFor(() => expect(page.find(selector).exists()).toBe(true))
 
+// No confirmation to give: an answer takes the session straight to the next card.
+const textShown = (page: Page, text: string) =>
+  vi.waitFor(() => expect(page.text()).toContain(text))
+
 const answerCurrent = async (page: Page, known: boolean) => {
   await button(page, /Afficher la réponse/)?.trigger('click')
   await button(page, known ? /^Je savais/ : /Je ne savais pas/)?.trigger('click')
-  await shown(page, '.session-card__result')
 }
 
 const pack = aPack({
@@ -65,14 +67,13 @@ describe('a session offline', () => {
     expect(page.text()).toContain('Hors ligne — cartes à jour du')
   })
 
-  it('moves the card, shows where it goes and keeps the answer on the device (US1-3, FR-008)', async () => {
+  it('moves the card on, straight to the next one, and keeps the answer on the device (US1-3, FR-008)', async () => {
     const page = await mountSuspended(SessionPage, { route: '/revisions/seance?sujets=25' })
 
     expect(page.text()).not.toContain('Verso 2')
     await answerCurrent(page, true)
+    await textShown(page, 'Recto 1')
 
-    expect(page.text()).toContain('Boîte 1 → boîte 2')
-    expect(page.text()).toContain('Revient : dans 2 jours')
     expect(page.text()).toContain('1 réponse à envoyer')
 
     const [answer] = await (await openOfflineStore()).listAnswers()
@@ -82,8 +83,7 @@ describe('a session offline', () => {
   it('shows the description of the images, not the images (US1-5, FR-002)', async () => {
     const page = await mountSuspended(SessionPage, { route: '/revisions/seance?sujets=25' })
     await answerCurrent(page, false)
-    await button(page, /Carte suivante/)?.trigger('click')
-    await flushPromises()
+    await textShown(page, 'Recto 1')
 
     expect(page.findAll('.session-card__face img')).toHaveLength(0)
     expect(page.findAll('.offline-image-notice__item').map((item) => item.text())).toEqual([
@@ -95,9 +95,8 @@ describe('a session offline', () => {
   it('ends with the summary, from the boxes worked out on the device (US1-4)', async () => {
     const page = await mountSuspended(SessionPage, { route: '/revisions/seance?sujets=25' })
     await answerCurrent(page, false)
-    await button(page, /Carte suivante/)?.trigger('click')
+    await textShown(page, 'Recto 1')
     await answerCurrent(page, true)
-    await button(page, /Voir le bilan/)?.trigger('click')
     await shown(page, '.session-summary')
 
     expect(page.findAll('.session-summary__score strong').map((score) => score.text())).toEqual([
@@ -137,7 +136,6 @@ describe('an answer the device cannot keep (FR-008)', () => {
       "Cet appareil n'a pas pu garder votre réponse.",
     )
     expect(page.text()).not.toContain('connexion')
-    expect(page.find('.session-card__result').exists()).toBe(false)
     expect(page.find('.session-card__box').text()).toBe('Boîte 1')
   })
 })
@@ -159,8 +157,8 @@ describe('a session online that loses the network (edge case)', () => {
 
     goOffline()
     await answerCurrent(page, true)
+    await textShown(page, 'Recto 2')
 
-    expect(page.text()).toContain('Boîte 1 → boîte 2')
     expect(page.find('.session-card__error').exists()).toBe(false)
     expect(page.text()).toContain('1 réponse à envoyer')
   })

@@ -40,11 +40,8 @@
         :is-revealed="isRevealed"
         :is-answering="isAnswering"
         :save-failed="saveFailed"
-        :is-last="isLast"
-        :result="currentResult"
         @reveal="reveal"
         @answer="answer"
-        @next="next"
       />
       <div v-else class="session-page__empty">
         <h1 class="session-page__empty-title">{{ $t('nothing to review') }}</h1>
@@ -82,14 +79,12 @@ const {
   cards,
   isFromDevice,
   current,
-  currentResult,
   index,
   isRevealed,
   isAnswering,
   saveFailed,
   isQuitDialogOpen,
   isDone,
-  isLast,
   answeredCount,
   remainingCount,
   progressStyle,
@@ -99,7 +94,6 @@ const {
   nextReviewOn,
   reveal,
   answer,
-  next,
   askToQuit,
   closeQuitDialog,
 } = await useReviewSession()

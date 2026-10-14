@@ -64,8 +64,6 @@ describe('the cards kept on the device (FR-003)', () => {
 
     await button(page, /Afficher la réponse/)?.trigger('click')
     await button(page, /^Je savais/)?.trigger('click')
-    await vi.waitFor(() => expect(page.find('.session-card__result').exists()).toBe(true))
-    await button(page, /Voir le bilan/)?.trigger('click')
 
     await packUpdated()
     expect(calls.find(isUpcomingSearch)?.body).toMatchObject({
